@@ -1,0 +1,16 @@
+version: "2.1"
+
+services:
+  server:
+    container_name: "nosql2020-battles-server"
+    image: "nosql2020-battles-server:latest"
+    build: ./server
+    environment:
+      - MONGODB_HOST=db
+    ports:
+      - 3030:3030
+
+  db:
+    image: mongo
+    restart: always
+
