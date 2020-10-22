@@ -34,7 +34,7 @@ async def db_work():
     await app.db.test.insert_many(data)
 
 
-@app.get('/', response_class=HTMLResponse)
+@app.get('/')
 async def root():
     await db_work()
     cursor = app.db.test.find({}, {'_id': 0})  # dropping _id
