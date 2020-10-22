@@ -1,10 +1,10 @@
-version: "2.1"
+version: "3.0"
 
 services:
   server:
     container_name: "nosql2020-battles-server"
     image: "nosql2020-battles-server:latest"
-    build: ./server
+    build: ./backend
     environment:
       - MONGODB_HOST=db
     ports:
@@ -13,4 +13,3 @@ services:
   db:
     image: mongo
     restart: always
-
