@@ -1,4 +1,6 @@
 import pandas as pd
+import asyncio
+
 from io import StringIO
 
 from .db import db
@@ -8,12 +10,10 @@ from fastapi import UploadFile
 
 
 def reorder_files(files: List[UploadFile]):
-
     order = {
         'battles.csv': 0,
         'actors.csv': 1,
-        'durations.csv': 2,
-        'commanders.csv': 3
+        'durations.csv': 2
     }
     return sorted(files, key=lambda f: order[f.filename])
 
@@ -24,11 +24,13 @@ async def uploaded_csv_to_dict(csv_file: UploadFile):
 
 
 async def import_csv_battles_into_db(battle_csv_files: List[UploadFile]):
-    battles, actors, durations, commanders = reorder_files(battle_csv_files)
+    battles, actors, durations = reorder_files(battle_csv_files)
 
-    battles = await uploaded_csv_to_dict(battles)
-    actors = await uploaded_csv_to_dict(actors)
-    durations = await uploaded_csv_to_dict(durations)
+    battles, actors, durations = await asyncio.gather(
+        asyncio.ensure_future(uploaded_csv_to_dict(battles)),
+        asyncio.ensure_future(uploaded_csv_to_dict(actors)),
+        asyncio.ensure_future(uploaded_csv_to_dict(durations)),
+    )
 
     for i in range(len(battles)):
         battles[i].update({
