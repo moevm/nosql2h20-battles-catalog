@@ -44,7 +44,7 @@ async def import_csv_battles_into_db(battle_csv_files: List[UploadFile]):
     await db[settings.MONGODB_COLLECTION].insert_many(list(battles.values()))
 
 
-async def db_get_battles(limit, page_num, sort_by, war, actor):
+async def db_get_battles(limit: int, page_num: int, sort_by: str, war: str, actor: str):
     query = {}
     sort = []
 
@@ -59,12 +59,20 @@ async def db_get_battles(limit, page_num, sort_by, war, actor):
         })
 
     if sort_by is not None:
-        sort.append((sort_by, 1))
+        sort.append((sort_by, 1))  # sort in descending order
 
     skip_size = limit * (page_num - 1)
 
     total = await db[settings.MONGODB_COLLECTION].count_documents(query)
-    cursor = db[settings.MONGODB_COLLECTION].find(
-        query, {'_id': 0}, sort=sort).skip(skip_size).limit(limit)
+    cursor = db[settings.MONGODB_COLLECTION].find(query, {'_id': 0}, sort=sort).skip(skip_size).limit(limit)
     battles = await cursor.to_list(None)
     return battles, total
+
+
+async def db_find_warname_battle(name: str, war: str):
+    battle = await db[settings.MONGODB_COLLECTION].find_one({
+        'war': war,
+        'name': name,
+    }, {'_id': 0})
+
+    return battle

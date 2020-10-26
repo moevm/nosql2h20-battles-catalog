@@ -1,5 +1,5 @@
 from .db import db
-from .utils import import_csv_battles_into_db, db_get_battles
+from .utils import import_csv_battles_into_db, db_get_battles, db_find_warname_battle
 
 from typing import List
 from fastapi import APIRouter, Request
@@ -41,12 +41,20 @@ async def get_battles(limit: int, page: int, sort: str = None, war: str = None, 
     }
 
 
+@router.get('/battle/exists')
+async def battle_exists(name: str, war: str):
+    battle = await db_find_warname_battle(name, war)
+
+    return {
+        'battle': battle,
+        'exists': battle is not None
+    }
+
+
 @router.post('/upload')
 async def import_battle_files(files: List[UploadFile] = File(...)):
     await import_csv_battles_into_db(files)
 
-    return JSONResponse(
-        status_code=200,
-        content={
-            'message': 'Files uploaded successfully'
-        })
+    return {
+        'message': 'Files uploaded successfully'
+    }
