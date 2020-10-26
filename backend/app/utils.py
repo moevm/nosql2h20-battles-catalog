@@ -5,6 +5,8 @@ from io import StringIO
 
 from .db import db
 
+from .config import settings
+
 from typing import List
 from fastapi import UploadFile
 
@@ -39,4 +41,30 @@ async def import_csv_battles_into_db(battle_csv_files: List[UploadFile]):
         del actor_record['battle_id']
         battles[battle_id]['actors'].append(actor_record)
 
-    await db.test.insert_many(list(battles.values()))
+    await db[settings.MONGODB_COLLECTION].insert_many(list(battles.values()))
+
+
+async def db_get_battles(limit, page_num, sort_by, war, actor):
+    query = {}
+    sort = []
+
+    if war is not None:
+        query.update({
+            'war': war
+        })
+
+    if actor is not None:
+        query.update({
+            'actors': {'$elemMatch': {'actor_name': actor}}
+        })
+
+    if sort_by is not None:
+        sort.append((sort_by, 1))
+
+    skip_size = limit * (page_num - 1)
+
+    total = await db[settings.MONGODB_COLLECTION].count_documents(query)
+    cursor = db[settings.MONGODB_COLLECTION].find(
+        query, {'_id': 0}, sort=sort).skip(skip_size).limit(limit)
+    battles = await cursor.to_list(None)
+    return battles, total

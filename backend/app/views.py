@@ -1,5 +1,5 @@
 from .db import db
-from .utils import import_csv_battles_into_db
+from .utils import import_csv_battles_into_db, db_get_battles
 
 from typing import List
 from fastapi import APIRouter, Request
@@ -28,6 +28,17 @@ async def root():
 </body>
     '''
     return HTMLResponse(content=content)
+
+
+@router.get('/battles')
+async def get_battles(limit: int, page: int, sort: str = None, war: str = None, actor: str = None):
+    battles, total = await db_get_battles(limit, page, sort, war, actor)
+
+    return {
+        'battles': battles,
+        'total': total,
+        'current_page': page
+    }
 
 
 @router.post('/upload')
