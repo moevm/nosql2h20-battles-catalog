@@ -1,6 +1,5 @@
 from .db import db
-from .utils import import_csv_battles_into_db, db_get_battles, db_find_warname_battle
-
+from .utils import db_import_csv_battles, db_get_battles, db_get_wars, db_find_warname_battle
 from typing import List
 from fastapi import APIRouter, Request
 from fastapi import File, UploadFile
@@ -31,8 +30,8 @@ async def root():
 
 
 @router.get('/battles')
-async def get_battles(limit: int, page: int, sort: str = None, war: str = None, actor: str = None):
-    battles, total = await db_get_battles(limit, page, sort, war, actor)
+async def get_battles(limit: int, page: int, sort: str = None, names: str = None, wars: str = None, actors: str = None):
+    battles, total = await db_get_battles(limit, page, sort, names, wars, actors)
 
     return {
         'battles': battles,
@@ -51,9 +50,19 @@ async def battle_exists(name: str, war: str):
     }
 
 
+@router.get('/wars')
+async def get_wars(limit: int, page: int, sort: str = None, names: str = None, actors: str = None):
+    wars_data = await db_get_wars(limit, page, sort, names, actors)
+    return {
+        'wars': wars_data['wars'],
+        'total': wars_data['total'][0]['count'],
+        'current_page': page
+    }
+
+
 @router.post('/upload')
 async def import_battle_files(files: List[UploadFile] = File(...)):
-    await import_csv_battles_into_db(files)
+    await db_import_csv_battles(files)
 
     return {
         'message': 'Files uploaded successfully'
