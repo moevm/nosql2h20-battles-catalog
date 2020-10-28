@@ -27,5 +27,5 @@ app = create_app()
 
 
 @app.exception_handler(Exception)
-async def exception_handler(request: Request, e: Exception):
-    return error_response(str(e))
+async def exception_handler(r: Request, e: Exception):
+    return error_response('Server error, something went wrong')
