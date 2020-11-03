@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
 from .views import router, error_response
+from .utils import create_temp_dir, rm_temp_dir
 
 
 def create_app():
@@ -33,14 +34,14 @@ app = create_app()
 @app.on_event("startup")
 async def startup_event():
     if os.path.exists(settings.TEMP_DIR):
-        shutil.rmtree(settings.TEMP_DIR)
+        rm_temp_dir()
 
-    os.mkdir(settings.TEMP_DIR)
+    create_temp_dir()
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    shutil.rmtree(settings.TEMP_DIR)
+    rm_temp_dir()
 
 
 @app.exception_handler(Exception)

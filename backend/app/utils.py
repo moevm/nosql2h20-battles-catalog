@@ -16,15 +16,19 @@ from .config import settings
 from .db import db
 
 
+def rm_temp_dir():
+    shutil.rmtree(settings.TEMP_DIR)
+
+
+def create_temp_dir():
+    os.mkdir(settings.TEMP_DIR)
+
+
 def _cleanup_temp_dir():
     async def _clean():
         await asyncio.sleep(60)
-        with os.scandir(settings.TEMP_DIR) as it:
-            for entry in it:
-                if entry.is_file():
-                    os.unlink(entry)
-                elif entry.is_dir():
-                    shutil.rmtree(entry)
+        rm_temp_dir()
+        create_temp_dir()
 
     asyncio.ensure_future(_clean())
 
