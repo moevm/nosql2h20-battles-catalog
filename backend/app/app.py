@@ -1,12 +1,11 @@
 import os
-import shutil
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
-from .views import router, error_response
 from .utils import create_temp_dir, rm_temp_dir
+from .views import router, error_response
 
 
 def create_app():

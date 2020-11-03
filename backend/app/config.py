@@ -1,4 +1,5 @@
 import os
+import tempfile
 from pathlib import Path
 
 from pydantic import BaseSettings
@@ -18,3 +19,4 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+tempfile.tempdir = settings.TEMP_DIR
