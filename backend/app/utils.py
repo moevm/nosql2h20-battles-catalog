@@ -1,5 +1,10 @@
 import asyncio
+import os
+import shutil
+import subprocess
 from collections import defaultdict
+from datetime import datetime
+from functools import wraps
 from io import StringIO
 from typing import List
 
@@ -9,6 +14,29 @@ from pymongo import UpdateOne
 
 from .config import settings
 from .db import db
+
+
+def _cleanup_temp_dir():
+    async def _clean():
+        await asyncio.sleep(60)
+        with os.scandir(settings.TEMP_DIR) as it:
+            for entry in it:
+                if entry.is_file():
+                    os.unlink(entry)
+                elif entry.is_dir():
+                    shutil.rmtree(entry)
+
+    asyncio.ensure_future(_clean())
+
+
+def cleanup_tempdir_after(view):
+    @wraps(view)
+    async def wrapper(*args, **kwargs):
+        resp = await view(*args, **kwargs)
+        _cleanup_temp_dir()
+        return resp
+
+    return wrapper
 
 
 def _reorder_files(files: List[UploadFile]):
@@ -102,7 +130,8 @@ def group_by_actor(actors):
         grouped_actors[a_name]['initial_state'] = grouped_actors[a_name].get('initial_state', 0) + actor[
             'initial_state']
         grouped_actors[a_name]['casualties'] = grouped_actors[a_name].get('casualties', 0) + actor['casualties']
-        grouped_actors[a_name]['commanders'] = grouped_actors[a_name].get('commanders', set()) | set([actor['commander']])
+        grouped_actors[a_name]['commanders'] = grouped_actors[a_name].get('commanders', set()) | set(
+            [actor['commander']])
         grouped_actors[a_name]['army_name'] = grouped_actors[a_name].get('army_name', set()) | set([actor['army_name']])
         grouped_actors[a_name]['actor_name'] = a_name
     return list(grouped_actors.values())
@@ -179,3 +208,42 @@ async def db_find_warname_battle(name: str, war: str):
         'name': name,
     }, {'_id': 0})
     return battle
+
+
+async def db_export_csv():
+    db[settings.MONGODB_COLLECTION].aggregate([
+        {'$unwind': "$actors"},
+        {'$addFields': {"actors.battle_id": "$battle_id"}},
+        {'$project': {'_id': 0}},
+        {'$replaceRoot': {'newRoot': "$actors"}},
+        {'$out': "export_actors"}
+    ])
+
+    db[settings.MONGODB_COLLECTION].aggregate([
+        {'$unset': "actors"},
+        {'$project': {'_id': 0}},
+        {'$out': "export_battles"}
+    ])
+
+    export_battles_cmd = f'''
+    mongoexport --host {settings.MONGODB_HOST}:{settings.MONGODB_PORT} \
+                --db {settings.MONGODB_DB_NAME} \
+                --collection export_battles \
+                --type=csv --out {settings.TEMP_DIR}/export/battles.csv --fields battle_id,name,war,datetime_min,datetime_max
+    '''
+
+    export_actors_cmd = f'''
+    mongoexport --host {settings.MONGODB_HOST}:{settings.MONGODB_PORT} \
+                --db {settings.MONGODB_DB_NAME} \
+                --collection export_actors \
+                --type=csv --out {settings.TEMP_DIR}/export/actors.csv --fields battle_id,actor_name,army_name,commander,initial_state,casualties,is_winner
+    '''
+
+    subprocess.run(export_battles_cmd, shell=True)
+    subprocess.run(export_actors_cmd, shell=True)
+
+    return shutil.make_archive(
+        f'{settings.TEMP_DIR}/nosql2020_export_{datetime.now().replace(microsecond=0)}',
+        'zip',
+        settings.TEMP_DIR + '/export'
+    )

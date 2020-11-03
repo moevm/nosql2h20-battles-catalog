@@ -1,6 +1,10 @@
+import os
+import shutil
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
+from .config import settings
 from .views import router, error_response
 
 
@@ -24,6 +28,19 @@ def create_app():
 
 
 app = create_app()
+
+
+@app.on_event("startup")
+async def startup_event():
+    if os.path.exists(settings.TEMP_DIR):
+        shutil.rmtree(settings.TEMP_DIR)
+
+    os.mkdir(settings.TEMP_DIR)
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    shutil.rmtree(settings.TEMP_DIR)
 
 
 @app.exception_handler(Exception)

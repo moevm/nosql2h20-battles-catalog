@@ -1,10 +1,12 @@
+from pathlib import Path
 from typing import List
 
 from fastapi import APIRouter
 from fastapi import File, UploadFile
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 
-from .utils import db_import_csv_battles, db_get_battles, db_get_wars, db_find_warname_battle
+from .utils import db_import_csv_battles, db_get_battles, db_get_wars, db_find_warname_battle, db_export_csv, \
+    cleanup_tempdir_after
 
 router = APIRouter()
 
@@ -65,3 +67,10 @@ async def import_battle_files(files: List[UploadFile] = File(...)):
     return {
         'message': 'Files uploaded successfully'
     }
+
+
+@router.get('/export')
+@cleanup_tempdir_after
+async def download_battle_files():
+    zip_export_path = await db_export_csv()
+    return FileResponse(path=zip_export_path, filename=Path(zip_export_path).name)
