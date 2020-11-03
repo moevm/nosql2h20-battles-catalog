@@ -7,15 +7,15 @@ Setup venv and install dependencies
 ```bash
 python3 -m venv venv   
 ./venv/bin/activate    
-pip install -r ./server/requirements.txt
+pip install -r ./backe/requirements.txt
 ```  
 Run dev server (would be running on `http://localhost:8000`)  
 ```bash
-python -m server
+python -m backend
 ```
 Run prod server
 ```
-gunicorn server.app:app --bind=<host>:<port> -w 4 -k uvicorn.workers.UvicornWorker
+gunicorn backend.app:app --bind=<host>:<port> -w 4 -k uvicorn.workers.UvicornWorker
 ```
 ### Docker
 ```bash
