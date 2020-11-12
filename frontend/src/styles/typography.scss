@@ -1,0 +1,12 @@
+@import '~@angular/material/theming';
+
+$font-family: 'Inter, sans-serif';
+$headline: mat-typography-level(34px, 36px);
+$title: mat-typography-level(24px, 24px);
+$subheading-2: mat-typography-level(20px, 24px, 500);
+$subheading-1: mat-typography-level(16px, 24px);
+$body-1: mat-typography-level(16px, 24px);
+$body-2: mat-typography-level(14px, 20px);
+$button: mat-typography-level(14px, 16px, 500, null, 1.25px);
+$caption: mat-typography-level(12px, 16px, 400, null, .4px);
+$input: mat-typography-level(12px, 1.5);

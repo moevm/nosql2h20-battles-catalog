@@ -1,0 +1,13 @@
+.charts-wrapper {
+  display: grid;
+  height: 100%;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  justify-items: center;
+  align-items: center;
+}
+
+.chart {
+  min-height: 253px;
+  min-width: 400px;
+}

@@ -1,0 +1,46 @@
+@import '../palettes';
+@import '../variables';
+
+.prolift .mat-slide-toggle {
+  .mat-slide-toggle-bar {
+    background-color: map-get($gray, 40);
+    height: 10px;
+    width: 28px;
+  }
+
+  .mat-slide-toggle-thumb,
+  .mat-slide-toggle-thumb-container {
+    height: 16px;
+    width: 16px;
+  }
+
+  .mat-slide-toggle-thumb-container {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  .mat-slide-toggle-thumb {
+    border: 1px solid map-get($gray, 70);
+    box-shadow: none;
+    box-sizing: border-box;
+    transition: border-color $transition-duration;
+  }
+}
+
+.prolift .mat-slide-toggle.mat-checked {
+  .mat-slide-toggle-bar {
+    background-color: map-get($primary-opacity, 40);
+  }
+
+  .mat-slide-toggle-thumb-container {
+    transform: translate3d(16px, 0, 0);
+  }
+
+  .mat-slide-toggle-thumb {
+    background-color: map-get($primary, 600);
+    border-color: map-get($primary, 600);
+  }
+
+  .mat-ripple-element {
+    background-color: map-get($primary, 600);
+  }
+}

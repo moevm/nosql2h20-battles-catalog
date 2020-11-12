@@ -1,0 +1,23 @@
+:host {
+  width: 100%;
+}
+
+.mat-form-field.mat-form-field-appearance-standard {
+  width: 100%;
+
+  ::ng-deep .mat-form-field-wrapper {
+    padding-bottom: 0;
+  }
+
+  ::ng-deep .mat-form-field-flex {
+    padding-top: 0;
+  }
+
+  ::ng-deep .mat-form-field-infix {
+    border-top: 0;
+  }
+
+  ::ng-deep .mat-form-field-underline {
+    bottom: -2px;
+  }
+}

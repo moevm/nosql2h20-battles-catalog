@@ -1,0 +1,12 @@
+@import '../typography';
+
+.prolift .mat-autocomplete-panel {
+  margin-top: 2px;
+  margin-left: 1px;
+
+  .mat-option {
+    font-size: map-get($caption, font-size);
+    height: 32px;
+    line-height: map-get($caption, line-height);
+  }
+}
