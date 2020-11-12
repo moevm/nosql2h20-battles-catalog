@@ -1,0 +1,27 @@
+@import '../palettes';
+@import '../typography';
+
+$padding-bottom: 16px;
+
+.prolift .mat-dialog-title {
+  font-size: map-get($subheading-2, font-size);
+  margin-bottom: 11px;
+}
+
+.prolift .mat-dialog-container {
+  padding: 14px 24px $padding-bottom;
+}
+
+.prolift .mat-dialog-actions {
+  margin-bottom: -$padding-bottom;
+  min-height: 42px;
+}
+
+.prolift .mat-dialog-content {
+  color: map-get($gray, 110);
+  max-height: none;
+}
+
+.prolift .cdk-overlay-pane {
+  max-width: none !important;
+}

@@ -1,0 +1,181 @@
+@import '../palettes';
+@import '../variables';
+@import '../typography';
+
+.pl-label {
+  display: inline-block;
+
+  mat-label {
+    align-items: center;
+    display: inline-flex;
+    font-size: map-get($caption, font-size);
+    line-height: map-get($caption, line-height);
+    min-height: 24px;
+    min-width: var(--label-min-width);
+  }
+
+  &--large mat-label {
+    padding-bottom: 4px;
+  }
+
+  &--horizontal {
+    align-items: center;
+    display: flex;
+  }
+
+  &--horizontal mat-label {
+    margin-right: 15px;
+  }
+}
+
+.prolift .mat-form-field.mat-form-field-appearance-outline {
+  width: 100%;
+  margin-top: 1px;
+  margin-bottom: 2px;
+
+  .mat-form-field-outline-thick {
+    visibility: hidden;
+  }
+
+  // stylelint-disable-next-line selector-max-compound-selectors
+  .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-outline {
+    opacity: 1;
+    top: 0;
+    transition: color $transition-duration;
+  }
+
+  .mat-form-field-flex {
+    margin-top: 0;
+    padding: 0;
+  }
+
+  .mat-form-field-wrapper,
+  .mat-input-element {
+    margin: 0;
+  }
+
+  .mat-form-field-wrapper {
+    padding-bottom: var(--error-padding-bottom);
+  }
+
+  .mat-form-field-infix {
+    border-radius: 5px;
+    border-top: 0;
+    margin-top: 1px;
+    padding: 0;
+  }
+
+  .mat-input-element {
+    border-radius: 5px;
+    box-sizing: border-box;
+    color: var(--input-color);
+    margin-left: 1.2px;
+    padding: 0 10.5px;
+    width: calc(100% - 2px);
+  }
+
+  .mat-input-element::placeholder {
+    color: map-get($gray, 60);
+  }
+
+  .mat-form-field-subscript-wrapper {
+    margin-top: .2em;
+    top: calc(100%);
+  }
+}
+
+.prolift .mat-form-field.pl-form-field--with-errors {
+  margin-bottom: 18px;
+}
+
+.prolift .mat-form-field:hover:not(.mat-form-field-disabled) .mat-form-field-outline {
+  color: map-get($gray, 80);
+}
+
+.prolift .mat-form-field.mat-focused:not(.mat-form-field-disabled) .mat-form-field-outline {
+  color: map-get($primary, 600);
+}
+
+.prolift .mat-form-field.mat-form-field-autofilled .mat-form-field-outline {
+  background-color: $input-autofilled;
+  border-radius: 5px;
+}
+
+.prolift .mat-form-field.mat-form-field-invalid .mat-form-field-outline,
+.prolift .mat-form-field.mat-form-field-invalid:hover .mat-form-field-outline,
+.prolift .mat-form-field.mat-form-field-invalid.mat-focused .mat-form-field-outline {
+  color: map-get($warn, 500);
+}
+
+.prolift .mat-form-field.mat-form-field-disabled {
+  .mat-form-field-outline {
+    color: map-get($gray, 30);
+  }
+
+  .mat-input-element {
+    background-color: map-get($gray, 10);
+    color: map-get($gray, 60);
+  }
+}
+
+.prolift .mat-form-field.mat-form-field-appearance-outline {
+  // stylelint-disable-next-line selector-max-compound-selectors
+  .mat-form-field-flex .mat-form-field-outline {
+    margin-right: -1.5px;
+    margin-top: -.5px;
+    min-height: 32px;
+  }
+
+  .mat-form-field-flex,
+  .mat-input-element {
+    min-height: 29px;
+  }
+
+  //.mat-form-field-suffix,
+  //.mat-form-field-prefix {
+  //  position: absolute;
+  //  top: 3px;
+  //  z-index: 1;
+  //}
+
+  .mat-form-field-suffix {
+    //right: 4px;
+    top: 0;
+  }
+  //
+  //.mat-form-field-prefix {
+  //  left: 4px;
+  //}
+
+  // stylelint-disable-next-line selector-max-compound-selectors
+  .mat-form-field-suffix .mat-icon,
+  .mat-form-field-prefix .mat-icon {
+    transform: scale(.83); // icon must be a bit smaller than originally
+  }
+}
+
+.prolift .mat-form-field.pl-form-field--with-suffix .mat-input-element {
+  padding-right: 30px;
+}
+
+.prolift .mat-form-field.pl-form-field--with-prefix .mat-input-element {
+  padding-left: 30px;
+}
+
+// textarea
+.pl-label.pl-form-field__label--textarea.pl-form-field__label--horizontal {
+  align-items: flex-start;
+
+  mat-label {
+    display: inline-block;
+    line-height: 24px;
+  }
+}
+
+// stylelint-disable-next-line selector-no-qualifying-type
+.prolift .mat-form-field.mat-form-field-appearance-outline textarea.mat-input-element {
+  margin-bottom: 2px;
+  margin-right: 1px;
+  padding-top: 5px;
+  width: 99%;
+}

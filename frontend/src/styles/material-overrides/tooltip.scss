@@ -1,0 +1,11 @@
+@import '~src/styles/typography';
+
+.prolift .mat-tooltip {
+  box-sizing: border-box;
+  font-size: map-get($caption, font-size);
+  line-height: 15px;
+  margin: 8px;
+  min-height: 23px;
+  padding: 4px 10px;
+  white-space: pre-line;
+}
