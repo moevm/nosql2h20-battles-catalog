@@ -1,0 +1,30 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.mat-sidenav-container {
+  height: 100%;
+}
+
+::ng-deep .mat-drawer-inner-container {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 8px;
+
+  .mat-flat-button {
+    align-self: center;
+    margin-bottom: 16px;
+    width: 135px;
+  }
+
+  .mat-flat-button:first-of-type {
+    margin-top: auto;
+  }
+}
+
+.mat-drawer-side {
+  min-width: 178px;
+}

@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -25,6 +25,18 @@ import { NgxEchartsModule } from 'ngx-echarts';
 import * as echarts from './custom-echarts';
 import { BattleCompareComponent } from './components/compare/battle-compare/battle-compare.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatIconService } from './maticon.service';
+import { HttpClientModule } from '@angular/common/http';
+import { WarsComponent } from './wars/wars.component';
+import { BattlesComponent } from './battles/battles.component';
+import { MatCardModule } from '@angular/material/card';
+import { TableComponent } from './wars/projects-table/table.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
+import { FilterHeaderModule } from './wars/projects-table/filter-header/filter-header.module';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   declarations: [
@@ -33,7 +45,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MultipleInputComponent,
     ValueAccessor,
     WarCompareComponent,
-    BattleCompareComponent
+    BattleCompareComponent,
+    WarsComponent,
+    BattlesComponent,
+    TableComponent
   ],
   imports: [
     BrowserModule,
@@ -51,7 +66,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatAutocompleteModule,
     NgxEchartsModule.forRoot({echarts}),
     MatCheckboxModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatSidenavModule,
+    MatListModule,
+    HttpClientModule,
+    MatCardModule,
+    MatTableModule,
+    MatSortModule,
+    FilterHeaderModule,
+    MatPaginatorModule
   ],
   providers: [
     {
@@ -73,7 +96,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     {
       provide: MAT_SELECT_CONFIG,
       useValue: {disableOptionCentering: true}
-    }
+    },
+    {
+      provide: APP_INITIALIZER,
+      deps: [MatIconService],
+      useFactory: (matIcon: MatIconService) => () => matIcon.init(),
+      multi: true
+    },
   ],
   bootstrap: [AppComponent]
 })

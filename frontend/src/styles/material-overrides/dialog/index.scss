@@ -1,0 +1,28 @@
+@import '../../shared/palettes';
+@import '../../shared/typography';
+@import 'variables';
+
+
+.mat-dialog-title {
+  @include mat-typography-level-to-styles($pl-typography, subheading-2);
+  margin-bottom: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mat-dialog-container {
+  padding:
+    map-get($pl-dialog-container-padding, top)
+    map-get($pl-dialog-container-padding, horizontal)
+    map-get($pl-dialog-container-padding, bottom);
+}
+
+.mat-dialog-actions {
+  margin-bottom: -#{map-get($pl-dialog-container-padding, bottom)};
+  min-height: 42px;
+}
+
+.mat-dialog-content {
+  @include mat-typography-level-to-styles($pl-typography, subheading-3);
+  color: map-get($gray, 110);
+}

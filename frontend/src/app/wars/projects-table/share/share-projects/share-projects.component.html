@@ -1,0 +1,19 @@
+<h3 mat-dialog-title>Sharing settings | selected projects ({{data.ids.length}})</h3>
+
+<mat-dialog-content>
+  <form class="invite-email" #form="ngForm" (ngSubmit)="share(email.value)">
+    <mat-form-field class="invite-email__field" floatLabel="never">
+      <input matInput #email
+             type="email"
+             pattern="[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+"
+             required
+             ngModel
+             name="email"
+             placeholder="User email">
+    </mat-form-field>
+
+    <button mat-flat-button color="primary" class="send-invite" [disabled]="processed || form.invalid">
+      Send invite
+    </button>
+  </form>
+</mat-dialog-content>

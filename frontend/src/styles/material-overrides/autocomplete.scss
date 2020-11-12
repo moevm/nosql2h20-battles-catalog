@@ -1,12 +1,18 @@
-@import '../typography';
+@import '~@angular/material/theming';
+@import '../shared/palettes';
 
-.prolift .mat-autocomplete-panel {
-  margin-top: 2px;
-  margin-left: 1px;
+.mat-autocomplete-panel {
+  min-width: auto;
 
   .mat-option {
-    font-size: map-get($caption, font-size);
-    height: 32px;
-    line-height: map-get($caption, line-height);
+    font-size: inherit;
+    height: 34px;
+  }
+
+  .mat-option:hover,
+  .mat-option.mat-active {
+    background-color: map-get($gray, 10);
   }
 }
+
+

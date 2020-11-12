@@ -1,0 +1,20 @@
+@import '~@angular/material/theming';
+@import '../shared/palettes';
+@import '../shared/typography';
+
+.mat-snack-bar-container {
+  background-color: $text-color;
+
+  .mat-simple-snackbar {
+    @include mat-typography-level-to-styles($pl-typography, subheading-3);
+    color: map-get($gray, 0);
+  }
+
+  &.error .mat-simple-snackbar {
+    color: map-get($warn, 700);
+  }
+
+  &.success .mat-simple-snackbar {
+    color: $success-color;
+  }
+}

@@ -1,0 +1,10 @@
+<h3 mat-dialog-title>Delete</h3>
+
+<mat-dialog-content class="mat-body-2">
+  Are you sure you want to {{data.type === ProjectType.my ? 'delete' : 'remove your access from'}} selected project ({{data.ids.length}})
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-dialog-close mat-button color="primary">Cancel</button>
+  <button mat-flat-button [disabled]="processed" (click)="delete()" color="primary">Delete</button>
+</mat-dialog-actions>

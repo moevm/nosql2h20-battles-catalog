@@ -1,17 +1,27 @@
-@import '../palettes';
-@import '../variables';
+@import '../shared/palettes';
+@import '../shared/variables';
 
-.prolift .mat-tab-label {
+.mat-tab-label,
+.mat-tab-link {
   font-weight: 400;
-  height: 41px;
+  height: 46px;
   min-width: 0;
   opacity: 1;
-  padding: 0 16px;
+  padding: 0 24px;
   transition: color $transition-duration;
 
   &-active {
     color: map-get($primary, 600);
   }
+}
+
+.mat-tab-group,
+.mat-tab-body-wrapper {
+  height: 100%;
+}
+
+.mat-ink-bar {
+  bottom: -1px;
 }
 
 .pl-tab-group.mat-tab-group {

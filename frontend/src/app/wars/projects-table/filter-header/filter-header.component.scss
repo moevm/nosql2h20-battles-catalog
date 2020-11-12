@@ -1,0 +1,113 @@
+@import '~src/styles/shared/palettes';
+
+:host {
+  font-size: 14px;
+}
+
+.mat-list-base {
+  padding-top: 0;
+}
+
+.filter-button {
+  color: map-get($gray, 80);
+
+  &.active {
+    color: map-get($primary, 600);
+  }
+}
+
+.filter-dialog .mat-dialog-container {
+  padding-top: 0;
+}
+
+.filter-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% + 14px);
+  margin-top: -14px;
+}
+
+.filter-body {
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  margin: 0 -24px;
+  min-height: 0;
+}
+
+.filter-select-all {
+  ::ng-deep .mat-checkbox-inner-container {
+    margin-right: 16px;
+  }
+
+  ::ng-deep .mat-checkbox-checkmark-path {
+    stroke-width: 3px;
+  }
+}
+
+
+.filter-options {
+  flex: 1 0 0;
+  max-width: 220px;
+  min-height: 0;
+  overflow-y: auto;
+
+  ::ng-deep .mat-pseudo-checkbox {
+    border-width: 1px;
+  }
+
+  ::ng-deep .mat-pseudo-checkbox-checked::after {
+    left: 2px;
+    top: 3.2px;
+    width: 9px;
+  }
+}
+
+.filter-body::ng-deep {
+  .mat-list-base .mat-list-item,
+  .mat-list-base .mat-list-option {
+    height: 40px;
+  }
+
+  .mat-list-text {
+    display: block;
+    max-height: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.filter-search-field::ng-deep .mat-form-field-wrapper {
+  padding-bottom: 0;
+}
+
+::ng-deep.filter-search-field.mat-form-field.mat-form-field-appearance-legacy .mat-form-field-infix {
+  border-top-width: .5rem;
+}
+
+.filter-search-field::ng-deep .mat-form-field-wrapper .mat-form-field-underline {
+  bottom: 0;
+}
+
+.filter-search-field::ng-deep .mat-form-field-flex {
+  padding: 0 15px 5px;
+}
+
+.filter-search-field.mat-focused .mat-icon {
+  color: map-get($primary, 600);
+}
+
+
+.filter-search-field .mat-icon {
+  color: map-get($gray, 70);
+  margin-right: 10px;
+  vertical-align: bottom;
+}
+
+.mat-divider {
+  border-color: rgba(map-get($gray, 30), .42);
+}
+
+.mat-dialog-actions {
+  justify-content: space-between;
+}

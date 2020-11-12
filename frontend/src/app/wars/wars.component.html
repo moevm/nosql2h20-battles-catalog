@@ -1,0 +1,23 @@
+<mat-card>
+  <mat-card-content>
+    <form class="search" (ngSubmit)="table.searchByName(search.value)">
+      <mat-form-field class="search__field" floatLabel="never">
+        <input matInput #search placeholder="Search project name">
+        <button type="button"
+                *ngIf="search.value"
+                matSuffix
+                mat-icon-button
+                (click)="table.searchByName(search.value = '')">
+          <mat-icon svgIcon="clear"></mat-icon>
+        </button>
+      </mat-form-field>
+
+      <button type="submit" mat-flat-button color="primary" class="search__button">
+        <mat-icon svgIcon="search"></mat-icon>
+      </button>
+    </form>
+
+    <app-table #table="appTable" class="projects-table"></app-table>
+
+  </mat-card-content>
+</mat-card>

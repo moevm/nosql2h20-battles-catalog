@@ -1,0 +1,77 @@
+@import '@angular/material/theming';
+@import 'shared/palettes';
+@import 'shared/typography';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.mat-table {
+  width: 100%;
+
+  .mat-header-cell:first-of-type,
+  .mat-cell:first-of-type,
+  .mat-footer-cell:first-of-type {
+    padding-left: 16px;
+  }
+
+  .mat-header-cell:last-of-type,
+  .mat-cell:last-of-type,
+  .mat-footer-cell:last-of-type {
+    padding-right: 16px;
+  }
+}
+
+.mat-icon {
+  color: map-get($gray, 70);
+}
+
+.icon-primary {
+  color: map-get($primary, 600);
+}
+
+.mat-column-name,
+.mat-column-field,
+.mat-column-client,
+.mat-column-well,
+.mat-column-creator {
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mat-column-name,
+.mat-column-client,
+.mat-column-creator {
+  max-width: 100px;
+}
+
+.mat-column-select {
+  width: 17px;
+}
+
+.mat-column-edit {
+  white-space: nowrap;
+}
+
+.scroll-wrapper {
+  height: 100%;
+  overflow: auto;
+}
+
+.scroll-wrapper,
+.mat-paginator,
+.menu__delete {
+  border-top: 1px solid map-get($gray, 30);
+}
+
+.icon-cell {
+  width: 40px;
+}
+
+.link {
+  color: $text-color;
+  text-decoration: none;
+}

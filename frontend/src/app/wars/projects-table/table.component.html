@@ -1,0 +1,94 @@
+<div class="scroll-wrapper">
+  <table mat-table [dataSource]="dataSource" matSort>
+
+    <!-- Checkbox Column -->
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-checkbox (change)="$event ? masterToggle() : null"
+                      [checked]="selection.hasValue() && isAllSelected()"
+                      [indeterminate]="selection.hasValue() && !isAllSelected()">
+        </mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <mat-checkbox (click)="$event.stopPropagation()"
+                      (change)="$event ? selection.toggle(row.id) : null"
+                      [checked]="selection.isSelected(row.id)">
+        </mat-checkbox>
+      </td>
+    </ng-container>
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Project name
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <a class="link" (click)="$event.stopPropagation()" [routerLink]="['/project', row.id]">
+          {{row.name}}
+        </a>
+      </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="country">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        <app-filter-header></app-filter-header>
+        Country
+      </th>
+      <td mat-cell *matCellDef="let row"> {{row.country.name}} </td>
+    </ng-container>
+
+    <!-- Weight Column -->
+    <ng-container matColumnDef="client">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        <app-filter-header></app-filter-header>
+        Client
+      </th>
+      <td mat-cell *matCellDef="let row"> {{row.client}} </td>
+    </ng-container>
+
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="field">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        <app-filter-header></app-filter-header>
+        Field
+      </th>
+      <td mat-cell *matCellDef="let row"> {{row.field}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="pad">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        <app-filter-header></app-filter-header>
+        Pad
+      </th>
+      <td mat-cell *matCellDef="let row"> {{row.pad}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="well">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        <app-filter-header></app-filter-header>
+        Well
+      </th>
+      <td mat-cell *matCellDef="let row"> {{row.well}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="edit">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Last edit </th>
+      <td mat-cell *matCellDef="let row"> {{row.updated_at | date:'dd.MM.yyyy'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="creator" *ngIf="(route.data | async).type === ProjectType.shared">
+      <th mat-header-cell *matHeaderCellDef>Creator</th>
+      <td mat-cell *matCellDef="let row" class="icon-cell"> {{row.user.full_name}} </td>
+    </ng-container>
+
+    <ng-container *ngIf="displayedColumns$ | async as columns">
+      <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns;"
+          [class.pl-selected-row]="selection.isSelected(row.id)"
+          (click)="selection.toggle(row.id)">
+      </tr>
+    </ng-container>
+  </table>
+</div>
+<mat-paginator [pageSizeOptions]="pageSizes"></mat-paginator>

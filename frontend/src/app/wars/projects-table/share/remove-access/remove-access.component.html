@@ -1,0 +1,8 @@
+<mat-dialog-content>
+  Removing access to {{data.projectName}} for {{data.userName}}
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-dialog-close mat-button color="primary" [tabIndex]="-1">Cancel</button>
+  <button mat-flat-button [disabled]="processed" (click)="remove()" [tabIndex]="0" color="primary">Remove</button>
+</mat-dialog-actions>
