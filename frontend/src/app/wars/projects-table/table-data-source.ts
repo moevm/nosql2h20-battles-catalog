@@ -1,13 +1,8 @@
 import { DataSource } from '@angular/cdk/collections';
-import { IProjectDto } from '@monorepo/interfaces/project/project.dto.interface';
 import { BehaviorSubject, merge, of, Subscription } from 'rxjs';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
-import {
-  IProjectsFilterOptionsDto, IProjectsQueryDto, ProjectType
-} from '@monorepo/interfaces/project/projects-query.dto.interface';
 import { map, pairwise, startWith, tap } from 'rxjs/operators';
-import { SortOrder } from '@monorepo/interfaces/query/sort-query.interface';
 
 export class TableDataSource extends DataSource<IProjectDto> {
   readonly query = new BehaviorSubject<IProjectsQueryDto>(null);
@@ -17,7 +12,7 @@ export class TableDataSource extends DataSource<IProjectDto> {
   private readonly _search = new BehaviorSubject<string>(null);
   private _updateSubscription = Subscription.EMPTY;
 
-  constructor(public type: ProjectType) { super(); }
+  constructor() { super(); }
 
   get data(): IProjectDto[] { return this._data.value; }
 
@@ -65,7 +60,6 @@ export class TableDataSource extends DataSource<IProjectDto> {
       .pipe(map(_ => ({
         sort: this._sort?.direction ? ({[this._sort.active]: this._sort.direction as SortOrder}) : {},
         search: this.search,
-        type: this.type,
         limit: this._paginator.pageSize,
         page: this._paginator.pageIndex,
         filter: this.filter.value

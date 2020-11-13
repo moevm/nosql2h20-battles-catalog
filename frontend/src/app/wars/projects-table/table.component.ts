@@ -3,12 +3,11 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
-import { ProjectType } from '@monorepo/interfaces/project/projects-query.dto.interface';
-import { warsService } from '@shared/providers/projects.service';
+import { BehaviorSubject } from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs/operators';
 import { OnDestroyMixin, untilComponentDestroyed } from '@w11k/ngx-componentdestroyed';
-import { ProjectsDataSource } from '@modules/dashboard/projects/projects-table/projects-data-source';
+import { WarsService } from '../../wars.service';
+import { TableDataSource } from './table-data-source';
 
 @Component({
   selector: 'app-table',
@@ -18,23 +17,17 @@ import { ProjectsDataSource } from '@modules/dashboard/projects/projects-table/p
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TableComponent extends OnDestroyMixin implements OnDestroy, AfterViewInit {
-  ProjectType = ProjectType;
-
-  displayedColumns$: Observable<string[]>;
-  dataSource = new ProjectsDataSource(this.route.snapshot.data.type as ProjectType);
-  selection = new SelectionModel<number>(true, []); // projectIds
+  columns = ['select', 'name', 'dates', 'duration', 'battles', 'actors', 'army-sizes', 'losses'];
+  dataSource = new TableDataSource();
+  selection = new SelectionModel<number>(true, []);
   pageSizes = [20, 50, 100];
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   private readonly search = new BehaviorSubject<string>('');
 
-  constructor(public route: ActivatedRoute,
-              private wars: warsService) {
+  constructor(private wars: WarsService) {
     super();
-    this.displayedColumns$ = route.data.pipe(map(({type}) => type === ProjectType.my
-      ? ['select', 'name', 'country', 'client', 'field', 'pad', 'well', 'edit']
-      : ['select', 'name', 'country', 'client', 'field', 'pad', 'well', 'edit']));
   }
 
   ngAfterViewInit(): void {
@@ -61,7 +54,6 @@ export class TableComponent extends OnDestroyMixin implements OnDestroy, AfterVi
 
     this.dataSource.filter.pipe(
       switchMap(f => this.wars.getFilterOptions({
-        type: this.dataSource.type,
         ...f
       }))
     ).subscribe();
