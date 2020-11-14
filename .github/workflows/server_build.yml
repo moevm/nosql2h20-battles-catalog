@@ -32,5 +32,6 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v2
         with:
+          context: ./backend
           push: true
           tags: supersolik/nosql2020-battles-backend:latest
