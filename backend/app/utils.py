@@ -134,16 +134,14 @@ async def db_get_battles(limit: int, page_num: int, sort_by: str, names: str, wa
 
 
 def group_by_actor(actors):
-    grouped_actors = defaultdict(dict)
-    for actor in actors:
-        a_name = actor['actor_name']
-        grouped_actors[a_name]['initial_state'] = grouped_actors[a_name].get('initial_state', 0) + actor[
-            'initial_state']
-        grouped_actors[a_name]['casualties'] = grouped_actors[a_name].get('casualties', 0) + actor['casualties']
-        grouped_actors[a_name]['commanders'] = grouped_actors[a_name].get('commanders', set()) | set([actor['commander']])
-        grouped_actors[a_name]['army_name'] = grouped_actors[a_name].get('army_name', set()) | set([actor['army_name']])
-        grouped_actors[a_name]['actor_name'] = a_name
-    return list(grouped_actors.values())
+    df_actors = pd.DataFrame(actors)
+    df_actors = df_actors.groupby('actor_name', as_index=False).agg({
+        'initial_state': 'sum', 
+        'casualties': 'sum', 
+        'army_name': lambda x : ','.join(set(x)), 
+        'commander': lambda x : ','.join(set(x)),
+    })
+    return df_actors.to_dict('records')
 
 
 async def db_get_wars(limit: int, page_num: int, sort_by: str, names: str, actors: str):
@@ -208,7 +206,10 @@ async def db_get_wars(limit: int, page_num: int, sort_by: str, names: str, actor
     for i in range(len(result_wars['wars'])):
         result_wars['wars'][i]['actors'] = group_by_actor(result_wars['wars'][i]['actors'])
 
-    return result_wars['wars'], result_wars['total'][0]['count']
+    total = 0
+    if len(result_wars['total']) > 0:
+        total = result_wars['total'][0]['count']
+    return result_wars['wars'], total
 
 
 async def db_find_warname_battle(name: str, war: str):
