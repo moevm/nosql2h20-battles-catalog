@@ -1,8 +1,4 @@
-name: Docker CI Server
-
-defaults:
-  run:
-    working-directory: ./backend
+name: Docker CI Backend
 
 on:
   push:
