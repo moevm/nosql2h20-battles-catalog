@@ -33,7 +33,7 @@ async def root():
 
 
 @router.get('/battles')
-async def get_battles(limit: int, page: int, sort: str = None, sort_dir: int = None, names: str = None, wars: str = None, actors: str = None):
+async def get_battles(limit: int, page: int, sort: str = None, sort_dir: int = 1, names: str = None, wars: str = None, actors: str = None):
     battles, total = await db_get_battles(limit, page, sort, sort_dir, names, wars, actors)
     return {
         'items': battles,
@@ -59,8 +59,8 @@ async def get_actors():
 
 
 @router.get('/wars')
-async def get_wars(limit: int, page: int, sort: str = None, names: str = None, actors: str = None):
-    wars, total = await db_get_wars(limit, page, sort, names, actors)
+async def get_wars(limit: int, page: int, sort: str = None, sort_dir: int = 1, names: str = None, actors: str = None):
+    wars, total = await db_get_wars(limit, page, sort, sort_dir, names, actors)
     return {
         'items': wars,
         'total': total,

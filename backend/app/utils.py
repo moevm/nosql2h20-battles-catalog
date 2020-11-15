@@ -122,7 +122,7 @@ async def db_get_battles(limit: int, page_num: int, sort_by: str, sort_dir: int,
             'actors': {'$elemMatch': {'actor_name': {"$in": actors.split(',')}}}
         })
 
-    if sort_by is not None and sort_dir is not None:
+    if sort_by is not None:
         sort.append((sort_by, sort_dir))
 
     skip_size = limit * (page_num - 1)
@@ -144,7 +144,7 @@ def group_by_actor(actors):
     return df_actors.to_dict('records')
 
 
-async def db_get_wars(limit: int, page_num: int, sort_by: str, names: str, actors: str):
+async def db_get_wars(limit: int, page_num: int, sort_by: str, sort_dir: int, names: str, actors: str):
     query = {}
     sort = 'datetime_min'
 
@@ -186,7 +186,7 @@ async def db_get_wars(limit: int, page_num: int, sort_by: str, names: str, actor
             }
         },
         {'$match': query},
-        {'$sort': {sort: 1}},
+        {'$sort': {sort: sort_dir}},
         {
             '$facet': {
                 'wars': [
