@@ -138,8 +138,8 @@ def group_by_actor(actors):
     df_actors = df_actors.groupby('actor_name', as_index=False).agg({
         'initial_state': 'sum', 
         'casualties': 'sum', 
-        'army_name': lambda x : ','.join(set(x)), 
-        'commander': lambda x : ','.join(set(x)),
+        'army_name': lambda x : set(x), 
+        'commander': lambda x : set(x),
     })
     return df_actors.to_dict('records')
 
