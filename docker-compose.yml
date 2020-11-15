@@ -3,7 +3,6 @@ version: "3.0"
 services:
   server:
     image: "supersolik/nosql2020-battles-backend:latest"
-    build: ./backend
     environment:
       - MONGODB_HOST=db
     ports:
