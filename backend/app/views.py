@@ -36,7 +36,7 @@ async def root():
 async def get_battles(limit: int, page: int, sort: str = None, names: str = None, wars: str = None, actors: str = None):
     battles, total = await db_get_battles(limit, page, sort, names, wars, actors)
     return {
-        'battles': battles,
+        'items': battles,
         'total': total,
         'current_page': page
     }
@@ -55,7 +55,7 @@ async def battle_exists(name: str, war: str):
 async def get_wars(limit: int, page: int, sort: str = None, names: str = None, actors: str = None):
     wars, total = await db_get_wars(limit, page, sort, names, actors)
     return {
-        'wars': wars,
+        'items': wars,
         'total': total,
         'current_page': page
     }
