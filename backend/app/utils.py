@@ -260,3 +260,7 @@ async def db_export_csv():
         'zip',
         settings.TEMP_DIR + '/export'
     )
+
+async def db_find_unique_actors():
+    actors = await db[settings.MONGODB_COLLECTION].distinct( "actors.actor_name" )
+    return actors

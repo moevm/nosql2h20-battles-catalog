@@ -6,7 +6,7 @@ from fastapi import File, UploadFile
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 
 from .utils import db_import_csv_battles, db_get_battles, db_get_wars, db_find_warname_battle, db_export_csv, \
-    cleanup_tempdir_after
+    cleanup_tempdir_after, db_find_unique_actors
 
 router = APIRouter()
 
@@ -48,6 +48,13 @@ async def battle_exists(name: str, war: str):
     return {
         'battle': battle,
         'exists': battle is not None
+    }
+
+@router.get('/actors')
+async def get_actors():
+    actors = await db_find_unique_actors()
+    return {
+        'actors': actors,
     }
 
 
