@@ -1,0 +1,80 @@
+<h3 mat-dialog-title>Create battle</h3>
+
+<mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" id="HTMLForm">
+    <label class="pl-label create-battle-form-field pl-label--horizontal">
+      <mat-label>War</mat-label>
+      <mat-form-field>
+        <input formControlName="war" type="text" matInput>
+      </mat-form-field>
+    </label>
+
+    <label class="pl-label create-battle-form-field pl-label--horizontal">
+      <mat-label>Name</mat-label>
+      <mat-form-field>
+        <input formControlName="name" type="text" matInput>
+      </mat-form-field>
+    </label>
+
+    <label class="pl-label create-battle-form-field pl-label--horizontal">
+      <mat-label>Start datetime</mat-label>
+      <mat-form-field>
+        <input matInput formControlName="start" type="datetime-local" placeholder="start date">
+      </mat-form-field>
+    </label>
+
+    <label class="pl-label create-battle-form-field pl-label--horizontal">
+      <mat-label>End datetime</mat-label>
+      <mat-form-field>
+        <input matInput formControlName="end" type="datetime-local" placeholder="start date">
+        <mat-error *ngIf="form.controls.end.errors?.lessThanStart">End datetime must be after Start datetime</mat-error>
+      </mat-form-field>
+    </label>
+
+    <div class="create-battle-form-field">
+      <label class="pl-label pl-label--horizontal">
+        <mat-label>Actors</mat-label>
+        <app-multiple-input formControlName="actors"
+                            [items]="service.allActors | async"
+                            (added)="addActor()"
+                            (removed)="removeActor($event)">
+          <mat-error *ngIf="form.controls.actors.errors?.minLength">At least two actors must be chosen</mat-error>
+        </app-multiple-input>
+      </label>
+    </div>
+
+    <form [formGroup]="getActorFormGroup(i)" *ngFor="let actor of form.controls.actors.value; let i = index">
+      <div class="pl-label pl-label--horizontal actor-form">
+        <mat-checkbox #checkbox formControlName="isWinner" matTooltip="Check if winner" matTooltipPosition="above"></mat-checkbox>
+        <mat-label>{{actor}}</mat-label>
+        <label class="pl-label actor-form__field">
+          <mat-label style="max-width: none;">Army name</mat-label>
+          <mat-form-field>
+            <input matInput type="text" formControlName="armyName">
+          </mat-form-field>
+        </label>
+        <label class="pl-label actor-form__field">
+          <mat-label>Size</mat-label>
+          <mat-form-field>
+            <input matInput type="number" min="0" formControlName="size">
+          </mat-form-field>
+        </label>
+        <label class="pl-label actor-form__field">
+          <mat-label>Losses</mat-label>
+          <mat-form-field>
+            <input matInput type="number" min="0" formControlName="losses">
+          </mat-form-field>
+        </label>
+        <label class="pl-label actor-form__field" style="width: 100%">
+          <mat-label style="max-width: none;">Commanders</mat-label>
+          <app-multiple-input formControlName="commanders"></app-multiple-input>
+        </label>
+      </div>
+    </form>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button color="primary" matDialogClose style="margin-right: 6px;">Cancel</button>
+  <button mat-flat-button [disabled]="form.invalid" type="submit" form="HTMLForm" color="primary" style="width: 78px">Save</button>
+</mat-dialog-actions>

@@ -1,0 +1,22 @@
+@import '../typography';
+
+.prolift .mat-form-field-type-mat-chip-list {
+  .mat-form-field-infix {
+    display: flex;
+    align-items: center;
+  }
+
+  .mat-icon {
+    margin-top: 0;
+    margin-left: 3px;
+  }
+
+  .mat-chip {
+    min-height: 24px;
+    font-size: map-get($input, font-size);
+  }
+
+  .mat-chip-list-wrapper {
+    margin-left: 0;
+  }
+}

@@ -1,0 +1,23 @@
+.charts-wrapper {
+  display: grid;
+  height: 100%;
+  grid-template-areas: "chart1 chart2"
+                       "chart3 chart2";
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  justify-items: center;
+  align-items: center;
+}
+
+.chart {
+  min-height: 253px;
+  min-width: 400px;
+}
+
+@for $i from 1 through 3 {
+  .chart:nth-child(#{$i}) {
+    grid-area: chart#{$i};
+  }
+}
+
+

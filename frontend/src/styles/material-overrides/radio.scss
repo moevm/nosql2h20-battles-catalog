@@ -1,0 +1,29 @@
+@import '../palettes';
+
+.prolift {
+  .mat-radio-container,
+  .mat-radio-outer-circle,
+  .mat-radio-inner-circle {
+    height: 16px;
+    width: 16px;
+  }
+
+  .mat-radio-outer-circle {
+    border-color: map-get($gray, 70);
+    border-width: 1px;
+  }
+
+  .mat-radio-button.mat-radio-disabled .mat-radio-outer-circle {
+    background-color: map-get($gray, 10);
+    border-color: map-get($gray, 60);
+  }
+
+  .mat-radio-button.mat-radio-disabled.mat-radio-checked .mat-radio-outer-circle {
+    border-color: map-get($primary-opacity, 50);
+  }
+
+
+  .mat-radio-button.mat-radio-disabled .mat-radio-inner-circle {
+    background-color: map-get($primary-opacity, 50);
+  }
+}

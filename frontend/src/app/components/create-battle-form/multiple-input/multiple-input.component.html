@@ -1,0 +1,39 @@
+<mat-form-field appearance="standard"
+                [class.mat-form-field-invalid]="ngControl?.invalid && ngControl?.touched"
+                [ngClass]="[
+                  ngControl?.dirty ? 'ng-dirty' : '',
+                  ngControl?.pending ? 'ng-pending' : '',
+                  ngControl?.invalid ? 'ng-invalid' : '',
+                  ngControl?.valid ? 'ng-valid' : '',
+                  ngControl?.touched ? 'ng-touched' : '',
+                  ngControl?.untouched ? 'ng-untouched' : ''
+                ]">
+  <mat-chip-list #chipList>
+    <mat-chip
+        *ngFor="let item of value, let i = index"
+        [selectable]="false"
+        [removable]="true"
+        (removed)="remove(i)">
+      {{item}}
+      <mat-icon matChipRemove>cancel</mat-icon>
+    </mat-chip>
+    <input
+      #itemInput
+      (blur)="onTouch()"
+      [matAutocomplete]="auto"
+      [matChipInputFor]="chipList"
+      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      (matChipInputTokenEnd)="add($event)">
+  </mat-chip-list>
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+    <mat-option *ngFor="let item of filteredItems | async" [value]="item">
+      {{item}}
+    </mat-option>
+  </mat-autocomplete>
+  <div *ngIf="ngControl?.invalid && ngControl?.touched && ngControl?.errors"
+       class="prolift-form-field__errors"
+       [@transitionMessages]="transitionState">
+    <ng-content select="mat-error"></ng-content>
+    <ng-content select="[slot='errors']"></ng-content>
+  </div>
+</mat-form-field>

@@ -1,0 +1,91 @@
+@import '../palettes';
+@import '../variables';
+
+$select-height: 32px;
+
+.prolift .mat-form-field.mat-form-field-appearance-outline {
+  .mat-select {
+    margin-top: -2px;
+  }
+
+  .mat-select-value {
+    box-sizing: border-box;
+    height: $select-height;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 7px;
+  }
+
+  .mat-select-arrow-wrapper {
+    transform: translate(-8px, -2px) rotate(-45deg);
+  }
+
+  .mat-select-arrow {
+    display: none;
+  }
+
+  .mat-select-arrow-wrapper::after {
+    background-color: transparent;
+    border-bottom: 1.5px solid map-get($gray, 70);
+    border-left: 1.5px solid map-get($gray, 70);
+    content: '';
+    display: block;
+    height: 6px;
+    transition: border-color $transition-duration;
+    width: 6px;
+  }
+}
+
+// stylelint-disable-next-line selector-max-compound-selectors
+.prolift .mat-form-field .mat-select[aria-expanded='true'] .mat-select-arrow-wrapper::after,
+.prolift .mat-form-field.mat-focused .mat-select .mat-select-arrow-wrapper::after {
+  border-color: map-get($primary, 600);
+}
+
+// stylelint-disable-next-line selector-max-compound-selectors
+.prolift .mat-form-field.mat-form-field-invalid .mat-select[aria-expanded='true'] .mat-select-arrow-wrapper::after,
+.prolift .mat-form-field.mat-focused.mat-form-field-invalid .mat-select .mat-select-arrow-wrapper::after,
+.prolift .mat-form-field.mat-form-field-invalid .mat-select .mat-select-arrow-wrapper::after {
+  border-color: map-get($warn, 500);
+}
+
+.prolift .mat-form-field.mat-form-field-disabled .mat-form-field-flex {
+  background-color: map-get($gray, 10);
+}
+
+
+$select-option-height: 34px;
+
+.prolift .mat-select-panel {
+  max-height: $select-option-height * 6;
+
+  &:focus {
+    outline: none;
+  }
+
+  .mat-optgroup-label,
+  .mat-option,
+  .mat-option-text {
+    height: $select-option-height;
+    line-height: $select-option-height;
+  }
+
+  .mat-option:hover,
+  .mat-option.mat-active {
+    background-color: map-get($gray, 10);
+  }
+
+  .mat-option.mat-selected {
+    background-color: map-get($gray, 20);
+  }
+
+  .mat-pseudo-checkbox {
+    border-width: 1px;
+    color: map-get($gray, 70);
+  }
+
+  .mat-pseudo-checkbox::after {
+    left: 1.8px;
+    top: 3.4px;
+  }
+}

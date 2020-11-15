@@ -1,0 +1,41 @@
+.pl-label mat-label {
+  min-width: 85px;
+  max-width: 85px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  line-height: 24px;
+}
+
+.create-battle-form-field {
+  margin-bottom: 15px;
+}
+
+.actor-form {
+  display: flex;
+  margin-bottom: 8px;
+
+  &__field:not(:last-child) {
+    margin-right: 12px;
+  }
+
+  &__field:not(:last-child):not(:first-of-type) {
+    width: 92px;
+  }
+
+  > mat-label,
+  .mat-checkbox {
+    margin-top: 26px;
+  }
+
+  > mat-label {
+    margin-left: 8px;
+    min-width: 60px;
+    max-width: 60px;
+  }
+
+  .pl-label mat-label {
+    margin-bottom: -9px;
+  }
+}

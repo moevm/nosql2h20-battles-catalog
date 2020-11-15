@@ -1,0 +1,5 @@
+@import '~src/styles/typography';
+
+.prolift .mat-list-base .mat-list-item {
+  font-size: map-get($subheading-1, font-size);
+}
