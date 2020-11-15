@@ -103,7 +103,7 @@ async def db_import_csv_battles(battle_csv_files: List[UploadFile]):
     await db.drop_collection('temp_actors')
 
 
-async def db_get_battles(limit: int, page_num: int, sort_by: str, names: str, wars: str, actors: str):
+async def db_get_battles(limit: int, page_num: int, sort_by: str, sort_dir: int, names: str, wars: str, actors: str):
     query = {}
     sort = []
 
@@ -122,8 +122,8 @@ async def db_get_battles(limit: int, page_num: int, sort_by: str, names: str, wa
             'actors': {'$elemMatch': {'actor_name': {"$in": actors.split(',')}}}
         })
 
-    if sort_by is not None:
-        sort.append((sort_by, 1))  # sort in ascending order
+    if sort_by is not None and sort_dir is not None:
+        sort.append((sort_by, sort_dir))
 
     skip_size = limit * (page_num - 1)
 

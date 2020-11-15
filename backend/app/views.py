@@ -33,8 +33,8 @@ async def root():
 
 
 @router.get('/battles')
-async def get_battles(limit: int, page: int, sort: str = None, names: str = None, wars: str = None, actors: str = None):
-    battles, total = await db_get_battles(limit, page, sort, names, wars, actors)
+async def get_battles(limit: int, page: int, sort: str = None, sort_dir: int = None, names: str = None, wars: str = None, actors: str = None):
+    battles, total = await db_get_battles(limit, page, sort, sort_dir, names, wars, actors)
     return {
         'items': battles,
         'total': total,
