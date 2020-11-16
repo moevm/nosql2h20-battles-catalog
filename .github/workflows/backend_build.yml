@@ -2,7 +2,9 @@ name: Docker CI Backend
 
 on:
   push:
-    branches: [ master, backend-logic ]
+    branches:
+      - master
+      - backend-logic
   workflow_dispatch:
 
 jobs:
