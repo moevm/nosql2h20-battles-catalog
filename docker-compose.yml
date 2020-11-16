@@ -2,8 +2,7 @@ version: "3.0"
 
 services:
   server:
-    container_name: "nosql2020-battles-server"
-    image: "nosql2020-battles-server:latest"
+    image: "supersolik/nosql2020-battles-backend:latest"
     build: ./backend
     environment:
       - MONGODB_HOST=db
