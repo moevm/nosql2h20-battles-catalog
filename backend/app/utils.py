@@ -3,9 +3,7 @@ import os
 import shutil
 import subprocess
 import tempfile
-from collections import defaultdict
 from datetime import datetime
-from functools import wraps
 from io import StringIO
 from typing import List
 
@@ -16,31 +14,13 @@ from .config import settings
 from .db import db
 
 
-def rm_temp_dir():
-    shutil.rmtree(settings.TEMP_DIR)
+async def rmdir(path, delay=0):
+    await asyncio.sleep(delay)
+    shutil.rmtree(path)
 
 
-def create_temp_dir():
-    os.mkdir(settings.TEMP_DIR)
-
-
-def _cleanup_temp_dir():
-    async def _clean():
-        await asyncio.sleep(60)
-        rm_temp_dir()
-        create_temp_dir()
-
-    asyncio.ensure_future(_clean())
-
-
-def cleanup_tempdir_after(view):
-    @wraps(view)
-    async def wrapper(*args, **kwargs):
-        resp = await view(*args, **kwargs)
-        _cleanup_temp_dir()
-        return resp
-
-    return wrapper
+def mkdir(path):
+    os.makedirs(path)
 
 
 def _reorder_files(files: List[UploadFile]):
@@ -55,55 +35,8 @@ async def _uploaded_csv_to_dict(csv_file: UploadFile):
     )
 
 
-async def db_import_csv_battles(battle_csv_files: List[UploadFile]):
-    battles, actors = _reorder_files(battle_csv_files)
-
-    with tempfile.TemporaryDirectory(prefix='import', suffix=str(datetime.now())) as td:
-        battles_temp_path = os.path.abspath(td) + '/battles.csv'
-        actors_temp_path = os.path.abspath(td) + '/actors.csv'
-
-        with open(battles_temp_path, "wb") as temp_battles:
-            shutil.copyfileobj(battles.file, temp_battles)
-
-        with open(actors_temp_path, "wb") as temp_actors:
-            shutil.copyfileobj(actors.file, temp_actors)
-
-        import_battles_cmd = f'''
-        mongoimport --host={settings.MONGODB_HOST}:{settings.MONGODB_PORT} \
-                    --db={settings.MONGODB_DB_NAME} \
-                    --collection={settings.MONGODB_COLLECTION} \
-                    --mode merge --upsertFields=battle_id \
-                    --type=csv --headerline \
-                    --file=\"{battles_temp_path}\"
-        '''
-        import_actors_cmd = f'''
-        mongoimport --host={settings.MONGODB_HOST}:{settings.MONGODB_PORT} \
-                    --db={settings.MONGODB_DB_NAME} \
-                    --collection=temp_actors \
-                    --mode merge --upsertFields=battle_id,actor_name,army_name \
-                    --type=csv --headerline --ignoreBlanks\
-                    --file=\"{actors_temp_path}\"
-        '''
-        subprocess.run(import_battles_cmd, shell=True)
-        subprocess.run(import_actors_cmd, shell=True)
-
-    await db[settings.MONGODB_COLLECTION].aggregate([
-        {
-            '$lookup': {
-                'from': 'temp_actors',
-                'localField': 'battle_id',
-                'foreignField': 'battle_id',
-                'as': 'actors'
-            }
-        },
-        {'$unset': ['actors.battle_id', 'actors._id']},
-        {'$out': settings.MONGODB_COLLECTION}
-    ]).to_list(None)
-
-    await db.drop_collection('temp_actors')
-
-
-async def db_get_battles(limit: int, page_num: int, sort_by: str, sort_dir: int, names: str, wars: str, actors: str, search: str):
+async def db_get_battles(limit: int, page_num: int, sort_by: str, sort_dir: int, names: str, wars: str, actors: str,
+                         search: str):
     if search is not None and names is not None:
         raise Exception('query contains both "names" and "search" in GET /wars')
 
@@ -144,10 +77,10 @@ async def db_get_battles(limit: int, page_num: int, sort_by: str, sort_dir: int,
 def group_by_actor(actors):
     df_actors = pd.DataFrame(actors)
     df_actors = df_actors.groupby('actor_name', as_index=False).agg({
-        'initial_state': 'sum', 
-        'casualties': 'sum', 
-        'army_name': lambda x : set(x), 
-        'commander': lambda x : set(x),
+        'initial_state': 'sum',
+        'casualties': 'sum',
+        'army_name': lambda x: set(x),
+        'commander': lambda x: set(x),
     })
     return df_actors.to_dict('records')
 
@@ -236,7 +169,55 @@ async def db_find_warname_battle(name: str, war: str):
     return battle
 
 
-async def db_export_csv():
+async def db_import_csv(battle_csv_files: List[UploadFile]):
+    battles, actors = _reorder_files(battle_csv_files)
+
+    with tempfile.TemporaryDirectory(prefix='import') as td:
+        battles_temp_path = os.path.abspath(td) + '/battles.csv'
+        actors_temp_path = os.path.abspath(td) + '/actors.csv'
+
+        with open(battles_temp_path, "wb") as temp_battles:
+            shutil.copyfileobj(battles.file, temp_battles)
+
+        with open(actors_temp_path, "wb") as temp_actors:
+            shutil.copyfileobj(actors.file, temp_actors)
+
+        import_battles_cmd = f'''
+        mongoimport --host={settings.MONGODB_HOST}:{settings.MONGODB_PORT} \
+                    --db={settings.MONGODB_DB_NAME} \
+                    --collection={settings.MONGODB_COLLECTION} \
+                    --mode merge --upsertFields=battle_id \
+                    --type=csv --headerline \
+                    --file=\"{battles_temp_path}\"
+        '''
+        import_actors_cmd = f'''
+        mongoimport --host={settings.MONGODB_HOST}:{settings.MONGODB_PORT} \
+                    --db={settings.MONGODB_DB_NAME} \
+                    --collection=temp_actors \
+                    --mode merge --upsertFields=battle_id,actor_name,army_name \
+                    --type=csv --headerline --ignoreBlanks\
+                    --file=\"{actors_temp_path}\"
+        '''
+        subprocess.run(import_battles_cmd, shell=True)
+        subprocess.run(import_actors_cmd, shell=True)
+
+    await db[settings.MONGODB_COLLECTION].aggregate([
+        {
+            '$lookup': {
+                'from': 'temp_actors',
+                'localField': 'battle_id',
+                'foreignField': 'battle_id',
+                'as': 'actors'
+            }
+        },
+        {'$unset': ['actors.battle_id', 'actors._id']},
+        {'$out': settings.MONGODB_COLLECTION}
+    ]).to_list(None)
+
+    await db.drop_collection('temp_actors')
+
+
+async def db_export_csv(export_dir):
     await db[settings.MONGODB_COLLECTION].aggregate([
         {'$unwind': "$actors"},
         {'$addFields': {"actors.battle_id": "$battle_id"}},
@@ -251,18 +232,20 @@ async def db_export_csv():
         {'$out': "export_battles"}
     ]).to_list(None)
 
+    mkdir(os.path.join(export_dir, 'csv'))
+
     export_battles_cmd = f'''
     mongoexport --host {settings.MONGODB_HOST}:{settings.MONGODB_PORT} \
                 --db {settings.MONGODB_DB_NAME} \
                 --collection export_battles \
-                --type=csv --out {settings.TEMP_DIR}/export/battles.csv --fields battle_id,name,war,datetime_min,datetime_max
+                --type=csv --out {export_dir}/csv/battles.csv --fields battle_id,name,war,datetime_min,datetime_max
     '''
 
     export_actors_cmd = f'''
     mongoexport --host {settings.MONGODB_HOST}:{settings.MONGODB_PORT} \
                 --db {settings.MONGODB_DB_NAME} \
                 --collection export_actors \
-                --type=csv --out {settings.TEMP_DIR}/export/actors.csv --fields battle_id,actor_name,army_name,commander,initial_state,casualties,is_winner
+                --type=csv --out {export_dir}/csv/actors.csv --fields battle_id,actor_name,army_name,commander,initial_state,casualties,is_winner
     '''
 
     subprocess.run(export_battles_cmd, shell=True)
@@ -272,11 +255,11 @@ async def db_export_csv():
     await db.drop_collection('export_actors')
 
     return shutil.make_archive(
-        f'{settings.TEMP_DIR}/nosql2020_battles_{datetime.now().replace(microsecond=0)}',
+        os.path.join(export_dir, f'nosql2020_battles_{datetime.now().replace(microsecond=0)}'.replace(' ', '_')),
         'zip',
-        settings.TEMP_DIR + '/export'
+        os.path.join(export_dir, 'csv')
     )
 
+
 async def db_find_unique_actors():
-    actors = await db[settings.MONGODB_COLLECTION].distinct( "actors.actor_name" )
-    return actors
+    return await db[settings.MONGODB_COLLECTION].distinct("actors.actor_name")
