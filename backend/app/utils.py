@@ -103,18 +103,26 @@ async def db_import_csv_battles(battle_csv_files: List[UploadFile]):
     await db.drop_collection('temp_actors')
 
 
-async def db_get_battles(limit: int, page_num: int, sort_by: str, sort_dir: int, names: str, wars: str, actors: str):
+async def db_get_battles(limit: int, page_num: int, sort_by: str, sort_dir: int, names: str, wars: str, actors: str, search: str):
+    if search is not None and names is not None:
+        raise Exception('query contains both "names" and "search" in GET /wars')
+
     query = {}
     sort = []
 
     if names is not None:
         query.update({
-            'name': {"$in": names.split(',')}
+            'name': {'$in': names.split(',')}
+        })
+
+    if search is not None:
+        query.update({
+            'name': {'$regex': f'.*{search}.*', '$options': 'i'}
         })
 
     if wars is not None:
         query.update({
-            'war': {"$in": wars.split(',')}
+            'war': {'$in': wars.split(',')}
         })
 
     if actors is not None:
@@ -144,7 +152,10 @@ def group_by_actor(actors):
     return df_actors.to_dict('records')
 
 
-async def db_get_wars(limit: int, page_num: int, sort_by: str, sort_dir: int, names: str, actors: str):
+async def db_get_wars(limit: int, page_num: int, sort_by: str, sort_dir: int, names: str, actors: str, search: str):
+    if search is not None and names is not None:
+        raise Exception('query contains both "names" and "search" in GET /wars')
+
     query = {}
     sort = 'datetime_min'
 
@@ -154,6 +165,11 @@ async def db_get_wars(limit: int, page_num: int, sort_by: str, sort_dir: int, na
     if names is not None:
         query.update({
             'name': {'$in': names.split(',')}
+        })
+
+    if search is not None:
+        query.update({
+            'name': {'$regex': f'.*{search}.*', '$options': 'i'}
         })
 
     if actors is not None:
