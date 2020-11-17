@@ -3,18 +3,20 @@ import { BehaviorSubject, merge, of, Subscription } from 'rxjs';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { map, pairwise, startWith, tap } from 'rxjs/operators';
+import { IWar } from '../interfaces/war.interface';
+import { IWarsQuery } from '../interfaces/wars-query.interface';
 
-export class TableDataSource extends DataSource<IProjectDto> {
-  readonly query = new BehaviorSubject<IProjectsQueryDto>(null);
-  readonly filter = new BehaviorSubject<IProjectsFilterOptionsDto>({});
+export class TableDataSource extends DataSource<IWar> {
+  readonly query = new BehaviorSubject<IWarsQuery>(null);
+  readonly filter = new BehaviorSubject<any>({});
 
-  private readonly _data = new BehaviorSubject<IProjectDto[]>([]);
+  private readonly _data = new BehaviorSubject<IWar[]>([]);
   private readonly _search = new BehaviorSubject<string>(null);
   private _updateSubscription = Subscription.EMPTY;
 
   constructor() { super(); }
 
-  get data(): IProjectDto[] { return this._data.value; }
+  get data(): IWar[] { return this._data.value; }
 
   set data(data) { this._data.next(data); }
 
@@ -40,7 +42,7 @@ export class TableDataSource extends DataSource<IProjectDto> {
     this._updateChangeSubscription();
   }
 
-  connect(): BehaviorSubject<IProjectDto[]> { return this._data; }
+  connect(): BehaviorSubject<IWar[]> { return this._data; }
 
   disconnect(): void { }
 
@@ -58,11 +60,10 @@ export class TableDataSource extends DataSource<IProjectDto> {
     this._updateSubscription.unsubscribe();
     this._updateSubscription = merge(sortChange, pageChange, this._search, this.filter)
       .pipe(map(_ => ({
-        sort: this._sort?.direction ? ({[this._sort.active]: this._sort.direction as SortOrder}) : {},
+        sort: this._sort && this._sort.direction ? this._sort.active : null,
         search: this.search,
         limit: this._paginator.pageSize,
-        page: this._paginator.pageIndex,
-        filter: this.filter.value
+        page: this._paginator.pageIndex
       }))).subscribe(query => this.query.next(query));
   }
 }

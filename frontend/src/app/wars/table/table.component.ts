@@ -1,12 +1,10 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, ViewChild } from '@angular/core';
-import { SelectionModel } from '@angular/cdk/collections';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { OnDestroyMixin, untilComponentDestroyed } from '@w11k/ngx-componentdestroyed';
-import { WarsService } from '../../wars.service';
+import { WarsService } from '../wars.service';
 import { TableDataSource } from './table-data-source';
 
 @Component({
@@ -19,7 +17,6 @@ import { TableDataSource } from './table-data-source';
 export class TableComponent extends OnDestroyMixin implements OnDestroy, AfterViewInit {
   columns = ['select', 'name', 'dates', 'duration', 'battles', 'actors', 'army-sizes', 'losses'];
   dataSource = new TableDataSource();
-  selection = new SelectionModel<number>(true, []);
   pageSizes = [20, 50, 100];
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -43,20 +40,24 @@ export class TableComponent extends OnDestroyMixin implements OnDestroy, AfterVi
     ).subscribe();
 
     this.wars.list$.pipe(untilComponentDestroyed(this)).subscribe(projects => {
-      this.dataSource.data = projects.items;
-      this.paginator.length = projects.totalItems;
-      this.paginator.pageIndex = projects.currentPage;
+      this.dataSource.data = projects.wars;
+      this.paginator.length = projects.total;
+      this.paginator.pageIndex = projects.current_page - 1;
 
-      if (this.selection.selected.some(selectedId => !projects.items.find(p => selectedId === p.id))) {
-        this.selection.clear();
+      if (this.wars.selection.selected.some(selectedId => !projects.wars.find(p => selectedId === p.name))) {
+        this.wars.selection.clear();
       }
     });
 
-    this.dataSource.filter.pipe(
-      switchMap(f => this.wars.getFilterOptions({
-        ...f
-      }))
-    ).subscribe();
+    // this.dataSource.filter.pipe(
+    //   switchMap(f => this.wars.getFilterOptions({
+    //     ...f
+    //   }))
+    // ).subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.wars.selection.clear();
   }
 
   searchByName(value: string): void {
@@ -65,13 +66,8 @@ export class TableComponent extends OnDestroyMixin implements OnDestroy, AfterVi
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected(): boolean {
-    const numSelected = this.selection.selected.length;
+    const numSelected = this.wars.selection.selected.length;
     const numRows = this.dataSource.data.length;
     return numSelected === numRows;
-  }
-
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle(): void {
-    this.isAllSelected() ? this.selection.clear() : this.selection.select(...this.dataSource.data.map(p => p.id));
   }
 }

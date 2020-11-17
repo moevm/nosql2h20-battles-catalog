@@ -1,6 +1,6 @@
 <mat-card>
   <mat-card-content>
-    <form class="search" (ngSubmit)="table.searchByName(search.value)">
+    <form class="search" #form="ngForm" (ngSubmit)="table.searchByName(search.value)">
       <mat-form-field class="search__field" floatLabel="never">
         <input matInput #search placeholder="Search project name">
         <button type="button"

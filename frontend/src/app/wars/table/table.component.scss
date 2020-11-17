@@ -1,6 +1,6 @@
-@import '@angular/material/theming';
-@import 'shared/palettes';
-@import 'shared/typography';
+@import '~@angular/material/theming';
+@import '~src/styles/shared/palettes';
+@import '~src/styles/shared/typography';
 
 :host {
   display: flex;
@@ -33,19 +33,22 @@
 }
 
 .mat-column-name,
-.mat-column-field,
-.mat-column-client,
-.mat-column-well,
-.mat-column-creator {
-  max-width: 90px;
+.mat-column-actors {
+  max-width: 150px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.mat-column-name,
-.mat-column-client,
-.mat-column-creator {
-  max-width: 100px;
+.mat-column-army-sizes {
+  width: 87px;
+}
+
+.mat-column-losses {
+  width: 60px;
+}
+
+.mat-column-actors {
+  min-width: 165px;
 }
 
 .mat-column-select {

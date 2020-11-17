@@ -43,7 +43,7 @@
       </ng-container>
     </div>
     <mat-dialog-actions>
-      <button (click)="selection.clear() || apply()" color="primary" mat-button>Clear all</button>
+      <button (click)="selection.clear(); apply()" color="primary" mat-button>Clear all</button>
       <button (click)="apply()" color="primary" mat-flat-button>Apply</button>
     </mat-dialog-actions>
   </div>

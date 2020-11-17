@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, ElementRef, TemplateRef, ViewChild } from '@angular/core';
 import { MatColumnDef, MatTable } from '@angular/material/table';
-import { ProjectsDataSource } from '@modules/dashboard/projects/projects-table/projects-data-source';
-import { ProjectsService } from '@shared/providers/projects.service';
 import { debounceTime, distinctUntilChanged, map, withLatestFrom } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MatSelectionList } from '@angular/material/list';
 import { SelectionModel } from '@angular/cdk/collections';
+import { WarsService } from '../../wars.service';
+import { TableDataSource } from '../table-data-source';
 
 @Component({
   selector: 'app-filter-header',
@@ -27,18 +27,18 @@ export class FilterHeaderComponent {
   constructor(
     public table: MatTable<any>,
     public col: MatColumnDef,
-    private projects: ProjectsService,
+    private wars: WarsService,
     private dialog: MatDialog,
   ) {
    this.options$ = this.search$.pipe(
-     debounceTime(500),
+     debounceTime<string>(500),
      distinctUntilChanged(),
-     withLatestFrom(this.projects.filterOptions$),
+     withLatestFrom(this.wars.filterOptions$),
      map(([search, options]) =>
        (options[this.col.name] as string[]).filter(opt =>
          opt.toLocaleLowerCase().includes(search.toLowerCase()))));
 
-   this.filter$ = (this.table.dataSource as ProjectsDataSource).filter.pipe(
+   this.filter$ = (this.table.dataSource as TableDataSource).filter.pipe(
      map(filter => filter[this.col.name] as string[] || [])
    );
   }
@@ -48,7 +48,7 @@ export class FilterHeaderComponent {
 
     const width = 220;
     const height = 332;
-    const rect = (this.button.nativeElement as HTMLElement).getBoundingClientRect();
+    const rect = (this.button.nativeElement as HTMLElement).getBoundingClientRect() as DOMRect;
     const left = rect.x - width / 1.5;
     const top = rect.y + rect.height;
     const toPx = v => `${v}px`;
@@ -76,12 +76,12 @@ export class FilterHeaderComponent {
   }
 
   apply(): void {
-    const filter = (this.table.dataSource as ProjectsDataSource).filter.value;
+    const filter = (this.table.dataSource as TableDataSource).filter.value;
     if (this.selection.selected.length) {
       filter[this.col.name] = this.selection.selected;
     } else {
       delete filter[this.col.name];
     }
-    (this.table.dataSource as ProjectsDataSource).filter.next({...filter});
+    (this.table.dataSource as TableDataSource).filter.next({...filter});
   }
 }

@@ -4,15 +4,16 @@
     <!-- Checkbox Column -->
     <ng-container matColumnDef="select">
       <th mat-header-cell *matHeaderCellDef>
-        <mat-checkbox (change)="$event ? masterToggle() : null"
-                      [checked]="selection.hasValue() && isAllSelected()"
-                      [indeterminate]="selection.hasValue() && !isAllSelected()">
+        <mat-checkbox *ngIf="wars.selection.hasValue()"
+                      (change)="$event ? wars.selection.clear() : null"
+                      [checked]="wars.selection.hasValue() && isAllSelected()"
+                      [indeterminate]="wars.selection.hasValue() && !isAllSelected()">
         </mat-checkbox>
       </th>
       <td mat-cell *matCellDef="let row">
         <mat-checkbox (click)="$event.stopPropagation()"
-                      (change)="$event ? selection.toggle(row.id) : null"
-                      [checked]="selection.isSelected(row.id)">
+                      (change)="$event ? wars.selection.toggle(row.name) : null"
+                      [checked]="wars.selection.isSelected(row.name)">
         </mat-checkbox>
       </td>
     </ng-container>
@@ -30,49 +31,47 @@
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
         Dates
       </th>
-      <td mat-cell *matCellDef="let row"> {{row.country.name}} </td>
+      <td mat-cell *matCellDef="let row"> {{row.datetime_min | date}} - {{row.datetime_max | date}} </td>
     </ng-container>
 
-    <!-- Weight Column -->
     <ng-container matColumnDef="duration">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
         Duration
       </th>
-      <td mat-cell *matCellDef="let row"> {{row.client}} </td>
+      <td mat-cell *matCellDef="let row"> {{row | duration}} </td>
     </ng-container>
 
-    <!-- Symbol Column -->
     <ng-container matColumnDef="battles">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
         Battles
       </th>
-      <td mat-cell *matCellDef="let row"> {{row.field}} </td>
+      <td mat-cell *matCellDef="let row"> {{row.battles_num}} </td>
     </ng-container>
 
     <ng-container matColumnDef="actors">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        <app-filter-header></app-filter-header>
+<!--        <app-filter-header></app-filter-header>-->
         Actors
       </th>
-      <td mat-cell *matCellDef="let row"> {{row.pad}} </td>
+      <td mat-cell *matCellDef="let row"> {{row.actors | actors}} </td>
     </ng-container>
 
     <ng-container matColumnDef="army-sizes">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
         Army sizes
       </th>
-      <td mat-cell *matCellDef="let row"> {{row.well}} </td>
+      <td mat-cell *matCellDef="let row"> {{row.actors | armySizes}} </td>
     </ng-container>
 
     <ng-container matColumnDef="losses">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Losses </th>
-      <td mat-cell *matCellDef="let row">  </td>
+      <td mat-cell *matCellDef="let row"> {{row.actors | armyLosses}} </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
     <tr mat-row *matRowDef="let row; columns: columns;"
-        [class.pl-selected-row]="selection.isSelected(row.id)"
-        (click)="selection.toggle(row.id)">
+        [class.pl-selected-row]="wars.selection.isSelected(row.name)"
+        (click)="wars.selection.toggle(row.name)">
     </tr>
   </table>
 </div>

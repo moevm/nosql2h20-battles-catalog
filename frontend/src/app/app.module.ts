@@ -16,7 +16,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { CreateBattleFormComponent } from './components/create-battle-form/create-battle-form.component';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MultipleInputComponent } from './components/create-battle-form/multiple-input/multiple-input.component';
 import { ValueAccessor } from './shared/value-accessor';
@@ -28,15 +28,20 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconService } from './maticon.service';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { WarsComponent } from './wars/wars.component';
 import { BattlesComponent } from './battles/battles.component';
 import { MatCardModule } from '@angular/material/card';
-import { TableComponent } from './wars/projects-table/table.component';
+import { TableComponent } from './wars/table/table.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
-import { FilterHeaderModule } from './wars/projects-table/filter-header/filter-header.module';
+import { FilterHeaderModule } from './wars/table/filter-header/filter-header.module';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { BaseUrlInterceptor } from './base-url.interceptor';
+import { ActorsPipe } from './wars/table/actors.pipe';
+import { ArmySizesPipe } from './wars/table/army-sizes.pipe';
+import { ArmyLossesPipe } from './wars/table/army-losses.pipe';
+import { DurationPipe } from './wars/table/duration.pipe';
 
 @NgModule({
   declarations: [
@@ -48,7 +53,11 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     BattleCompareComponent,
     WarsComponent,
     BattlesComponent,
-    TableComponent
+    TableComponent,
+    ActorsPipe,
+    ArmySizesPipe,
+    ArmyLossesPipe,
+    DurationPipe
   ],
   imports: [
     BrowserModule,
@@ -74,9 +83,11 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatTableModule,
     MatSortModule,
     FilterHeaderModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    FormsModule
   ],
   providers: [
+    {provide: HTTP_INTERCEPTORS, useClass: BaseUrlInterceptor, multi: true},
     {
       provide: MAT_CHECKBOX_DEFAULT_OPTIONS,
       useValue: {color: 'primary'}
@@ -88,7 +99,6 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
       useValue: {
-        appearance: 'outline',
         hideRequiredMarker: true,
         floatLabel: 'never'
       }
