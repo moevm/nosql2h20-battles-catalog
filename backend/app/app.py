@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
-from .utils import create_temp_dir, rm_temp_dir
+from .utils import mkdir, rmdir
 from .views import router, error_response
 
 
@@ -33,16 +33,16 @@ app = create_app()
 @app.on_event("startup")
 async def startup_event():
     if os.path.exists(settings.TEMP_DIR):
-        rm_temp_dir()
+        await rmdir(settings.TEMP_DIR)
 
-    create_temp_dir()
+    mkdir(settings.TEMP_DIR)
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    rm_temp_dir()
+    await rmdir(settings.TEMP_DIR)
 
 
 @app.exception_handler(Exception)
 async def exception_handler(r: Request, e: Exception):
-    return error_response('Server error, something went wrong')
+    return error_response(f'Server error, got: {e}')

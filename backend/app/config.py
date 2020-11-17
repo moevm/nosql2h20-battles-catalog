@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     MONGODB_COLLECTION: str = 'battles'
     SERVER_DIR: str = str(Path(CONFIG_DIR).absolute().parent)
     TEMP_DIR: str = SERVER_DIR + '/tmp'
+    EXPORT_FILES_RM_DELAY: int = os.getenv('EXPORT_FILES_RM_DELAY') or 5
 
 
 settings = Settings()
