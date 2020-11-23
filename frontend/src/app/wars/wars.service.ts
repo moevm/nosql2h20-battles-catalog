@@ -14,7 +14,7 @@ export class WarsService {
   readonly list$: Observable<IWars>;
   readonly filterOptions$: Observable<any>;
   readonly currentGetParams = new BehaviorSubject<IWarsQuery>({limit: 20, page: 0});
-  readonly selection = new SelectionModel<IWar>();
+  readonly selection = new SelectionModel<IWar>(true);
 
   private readonly list = new ReplaySubject<IWars>();
   private readonly filterOptions = new BehaviorSubject<any>({});

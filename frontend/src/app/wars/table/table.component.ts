@@ -23,7 +23,7 @@ export class TableComponent extends OnDestroyMixin implements OnDestroy, AfterVi
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   private readonly search = new BehaviorSubject<string>('');
 
-  constructor(private wars: WarsService) {
+  constructor(public wars: WarsService) {
     super();
   }
 
@@ -40,11 +40,13 @@ export class TableComponent extends OnDestroyMixin implements OnDestroy, AfterVi
     ).subscribe();
 
     this.wars.list$.pipe(untilComponentDestroyed(this)).subscribe(projects => {
-      this.dataSource.data = projects.wars;
+      this.dataSource.data = projects.items;
       this.paginator.length = projects.total;
       this.paginator.pageIndex = projects.current_page - 1;
 
-      if (this.wars.selection.selected.some(selectedId => !projects.wars.find(p => selectedId === p.name))) {
+      if (this.wars.selection.selected.some(
+        selectedWar => !projects.items.find(p => selectedWar.name === p.name)
+      )) {
         this.wars.selection.clear();
       }
     });
