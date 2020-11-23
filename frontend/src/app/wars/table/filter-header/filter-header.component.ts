@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatColumnDef, MatTable } from '@angular/material/table';
 import { debounceTime, distinctUntilChanged, map, withLatestFrom } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
@@ -14,11 +14,13 @@ import { TableDataSource } from '../table-data-source';
   styleUrls: ['./filter-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FilterHeaderComponent {
+export class FilterHeaderComponent implements OnInit {
   selection = new SelectionModel<string>(true, []);
   search$ = new BehaviorSubject<string>('');
   options$: Observable<string[]>;
   filter$: Observable<string[]>;
+
+  @Input() source: Observable<string[]>;
 
   @ViewChild('button', {read: ElementRef}) button: ElementRef;
   @ViewChild('filter') filter: TemplateRef<any>;
@@ -29,18 +31,23 @@ export class FilterHeaderComponent {
     public col: MatColumnDef,
     private wars: WarsService,
     private dialog: MatDialog,
-  ) {
-   this.options$ = this.search$.pipe(
-     debounceTime<string>(500),
-     distinctUntilChanged(),
-     withLatestFrom(this.wars.filterOptions$),
-     map(([search, options]) =>
-       (options[this.col.name] as string[]).filter(opt =>
-         opt.toLocaleLowerCase().includes(search.toLowerCase()))));
+  ) {}
 
-   this.filter$ = (this.table.dataSource as TableDataSource).filter.pipe(
-     map(filter => filter[this.col.name] as string[] || [])
-   );
+  ngOnInit(): void {
+    this.options$ = this.search$.pipe(
+      debounceTime<string>(500),
+      distinctUntilChanged(),
+      withLatestFrom(this.source),
+      map(([search, options]) =>
+        options.filter(opt =>
+          opt.toLocaleLowerCase().includes(search.toLowerCase())
+        )
+      )
+    );
+
+    this.filter$ = (this.table.dataSource as TableDataSource).filter.pipe(
+      map(filter => filter[this.col.name] as string[] || [])
+    );
   }
 
   open(e: Event, activeFilter: string[]): void {
@@ -82,6 +89,7 @@ export class FilterHeaderComponent {
     } else {
       delete filter[this.col.name];
     }
+
     (this.table.dataSource as TableDataSource).filter.next({...filter});
   }
 }

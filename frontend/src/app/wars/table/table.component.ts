@@ -6,6 +6,7 @@ import { filter, switchMap, tap } from 'rxjs/operators';
 import { OnDestroyMixin, untilComponentDestroyed } from '@w11k/ngx-componentdestroyed';
 import { WarsService } from '../wars.service';
 import { TableDataSource } from './table-data-source';
+import { ActorsService } from '../../actors.service';
 
 @Component({
   selector: 'app-table',
@@ -23,7 +24,7 @@ export class TableComponent extends OnDestroyMixin implements OnDestroy, AfterVi
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   private readonly search = new BehaviorSubject<string>('');
 
-  constructor(public wars: WarsService) {
+  constructor(public wars: WarsService, public actors: ActorsService) {
     super();
   }
 

@@ -6,6 +6,15 @@ import { map, pairwise, startWith, tap } from 'rxjs/operators';
 import { IWar } from '../interfaces/war.interface';
 import { IWarsQuery } from '../interfaces/wars-query.interface';
 
+const sortMap = {
+  dates: 'datetime_min',
+  name: 'name',
+  battles: 'battles_num',
+  'army-sizes': 'actors.initial_state',
+  losses: 'actors.casualties',
+  actors: 'actors.actor_name'
+};
+
 export class TableDataSource extends DataSource<IWar> {
   readonly query = new BehaviorSubject<IWarsQuery>(null);
   readonly filter = new BehaviorSubject<any>({});
@@ -60,10 +69,12 @@ export class TableDataSource extends DataSource<IWar> {
     this._updateSubscription.unsubscribe();
     this._updateSubscription = merge(sortChange, pageChange, this._search, this.filter)
       .pipe(map(_ => ({
-        sort: this._sort && this._sort.direction ? this._sort.active : null,
+        sort: this._sort && this._sort.direction ? sortMap[this._sort.active] : null,
+        sort_dir: this._sort && this._sort.direction === 'asc' ? 1 : -1,
         search: this.search,
         limit: this._paginator.pageSize,
-        page: this._paginator.pageIndex
+        page: this._paginator.pageIndex,
+        ...this.filter.value
       }))).subscribe(query => this.query.next(query));
   }
 }

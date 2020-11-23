@@ -4,6 +4,7 @@ import { CreateBattleFormComponent } from './components/create-battle-form/creat
 import { WarCompareComponent } from './components/compare/war-compare/war-compare.component';
 import { BattleCompareComponent } from './components/compare/battle-compare/battle-compare.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { WarsService } from './wars/wars.service';
 
 @Component({
   selector: 'app-root',
@@ -11,24 +12,16 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  constructor(public dialog: MatDialog, private router: Router) {}
+  constructor(public dialog: MatDialog, public router: Router, public wars: WarsService) {}
 
   openCreateBattleForm(): void {
     this.dialog.open(CreateBattleFormComponent, {minWidth: '85%'});
   }
 
-  openWarCompare(): void {
-    this.dialog.open(WarCompareComponent, {width: '95%', height: '95%'});
-  }
-
   openCompareDialog(): void {
-    this.dialog.open(
+    this.dialog.open<any>(
       this.router.url.includes('wars') ? WarCompareComponent : BattleCompareComponent,
       {width: '95%', height: '95%'}
-      );
-  }
-
-  openBattleCompare(): void {
-    this.dialog.open(BattleCompareComponent, {width: '95%', height: '95%'});
+    );
   }
 }

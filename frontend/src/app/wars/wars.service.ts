@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { IWars } from './interfaces/wars.interface';
 import { IWarsQuery } from './interfaces/wars-query.interface';
-import { distinctUntilChanged, tap } from 'rxjs/operators';
+import { distinctUntilChanged, map, take, tap } from 'rxjs/operators';
 import { SelectionModel } from '@angular/cdk/collections';
 import { IWar } from './interfaces/war.interface';
 
@@ -12,6 +12,7 @@ import { IWar } from './interfaces/war.interface';
 })
 export class WarsService {
   readonly list$: Observable<IWars>;
+  readonly namesList$: Observable<string[]>;
   readonly filterOptions$: Observable<any>;
   readonly currentGetParams = new BehaviorSubject<IWarsQuery>({limit: 20, page: 0});
   readonly selection = new SelectionModel<IWar>(true);
@@ -21,7 +22,8 @@ export class WarsService {
 
   constructor(private http: HttpClient) {
     this.list$ = this.list.pipe(distinctUntilChanged<IWars>());
-    // this.filterOptions$ = this.filterOptions.pipe(distinctUntilChanged());
+    this.namesList$ = this.list$.pipe(take<IWars>(1), map(list => list.items.map(war => war.name)));
+    this.filterOptions$ = this.filterOptions.pipe(distinctUntilChanged());
   }
 
   // getFilterOptions(query: IProjectsFilterOptionsQueryDto): Observable<IProjectsFilterOptionsQueryDto> {
@@ -45,14 +47,21 @@ export class WarsService {
       page: this.currentGetParams.value.page + 1,
       limit: this.currentGetParams.value.limit
     };
+
     if (currentGetParams.sort) {
-      params.search = currentGetParams.sort;
+      params.sort = currentGetParams.sort;
     }
-    if (currentGetParams.names) {
-      params.names = currentGetParams.names.toString();
+    if (currentGetParams.name) {
+      params.names = currentGetParams.name.toString();
     }
     if (currentGetParams.actors) {
       params.actors = currentGetParams.actors.toString();
+    }
+    if (currentGetParams.search) {
+      params.search = currentGetParams.search;
+    }
+    if (currentGetParams.sort && currentGetParams.sort_dir) {
+      params.sort_dir = currentGetParams.sort_dir;
     }
 
     return this.http.get<IWars>('wars', {params})

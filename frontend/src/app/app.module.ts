@@ -42,6 +42,9 @@ import { ActorsPipe } from './wars/table/actors.pipe';
 import { ArmySizesPipe } from './wars/table/army-sizes.pipe';
 import { ArmyLossesPipe } from './wars/table/army-losses.pipe';
 import { DurationPipe } from './wars/table/duration.pipe';
+import { TooltipActorsPipe } from './wars/table/tooltip/tooltip-actors.pipe';
+import { TooltipArmySizesPipe } from './wars/table/tooltip/tooltip-army-sizes.pipe';
+import { TooltipArmyLossesPipe } from './wars/table/tooltip/tooltip-army-losses.pipe';
 
 @NgModule({
   declarations: [
@@ -57,7 +60,10 @@ import { DurationPipe } from './wars/table/duration.pipe';
     ActorsPipe,
     ArmySizesPipe,
     ArmyLossesPipe,
-    DurationPipe
+    DurationPipe,
+    TooltipActorsPipe,
+    TooltipArmySizesPipe,
+    TooltipArmyLossesPipe
   ],
   imports: [
     BrowserModule,
@@ -87,6 +93,8 @@ import { DurationPipe } from './wars/table/duration.pipe';
     FormsModule
   ],
   providers: [
+    ArmySizesPipe,
+    ArmyLossesPipe,
     {provide: HTTP_INTERCEPTORS, useClass: BaseUrlInterceptor, multi: true},
     {
       provide: MAT_CHECKBOX_DEFAULT_OPTIONS,

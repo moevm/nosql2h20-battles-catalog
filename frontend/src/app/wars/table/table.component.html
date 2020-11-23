@@ -6,8 +6,7 @@
       <th mat-header-cell *matHeaderCellDef>
         <mat-checkbox *ngIf="wars.selection.hasValue()"
                       (change)="$event ? wars.selection.clear() : null"
-                      [checked]="wars.selection.hasValue() && isAllSelected()"
-                      [indeterminate]="wars.selection.hasValue() && !isAllSelected()">
+                      [indeterminate]="wars.selection.hasValue()">
         </mat-checkbox>
       </th>
       <td mat-cell *matCellDef="let row">
@@ -21,6 +20,7 @@
     <!-- Position Column -->
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        <app-filter-header [source]="wars.namesList$"></app-filter-header>
         Name
       </th>
       <td mat-cell *matCellDef="let row"> {{row.name}} </td>
@@ -50,22 +50,28 @@
 
     <ng-container matColumnDef="actors">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
-<!--        <app-filter-header></app-filter-header>-->
+        <app-filter-header [source]="actors.list$"></app-filter-header>
         Actors
       </th>
-      <td mat-cell *matCellDef="let row"> {{row.actors | actors}} </td>
+      <td mat-cell *matCellDef="let row" [matTooltip]="row.actors | tooltipActors">
+        {{row.actors | actors}}
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="army-sizes">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
         Army sizes
       </th>
-      <td mat-cell *matCellDef="let row"> {{row.actors | armySizes}} </td>
+      <td mat-cell *matCellDef="let row" [matTooltip]="row.actors | tooltipArmySizes">
+        {{row.actors | armySizes}}
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="losses">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Losses </th>
-      <td mat-cell *matCellDef="let row"> {{row.actors | armyLosses}} </td>
+      <td mat-cell *matCellDef="let row" [matTooltip]="row.actors | tooltipArmyLosses">
+        {{row.actors | armyLosses}}
+      </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
