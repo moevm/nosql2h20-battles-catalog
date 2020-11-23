@@ -2,8 +2,10 @@
 
 .mat-tooltip {
   @include mat-typography-level-to-styles($pl-typography, caption);
+  font-size: 14px;
   line-height: 15px;
   margin: 8px;
+  max-width: none;
   padding: 4px 10px;
-  white-space: pre-line;
+  white-space: break-spaces;
 }

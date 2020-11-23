@@ -11,7 +11,7 @@ const routes: Routes = [
   },
   {
     path: 'wars',
-    component: WarsComponent
+    component: WarsComponent,
   },
   {
     path: 'battles',

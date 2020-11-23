@@ -2,12 +2,19 @@
   <mat-sidenav mode="side" opened disableClose="true">
     <mat-nav-list>
       <a mat-list-item routerLink="wars" class="link" routerLinkActive="active">Wars</a>
-      <a mat-list-item routerLink="battles" class="link" routerLinkActive="active">Battles</a>
+      <a mat-list-item routerLink="battles" class="link battles" routerLinkActive="active">
+        Battles
+        <button mat-icon-button (click)="$event.stopPropagation(); $event.preventDefault()">
+          <mat-icon svgIcon="add"></mat-icon>
+        </button>
+      </a>
     </mat-nav-list>
     <button mat-flat-button color="primary">
       <mat-icon svgIcon="file_download"></mat-icon>Export
     </button>
-    <button mat-flat-button color="primary" (click)="openCompareDialog()" [disabled]="wars.selection.isEmpty()">
+    <button mat-flat-button color="primary"
+            (click)="openCompareDialog()"
+            [disabled]="(this.router.url.includes('wars') ? wars : battles).selection.isEmpty()">
       <mat-icon svgIcon="compare"></mat-icon>Compare
     </button>
     <button mat-flat-button color="primary">

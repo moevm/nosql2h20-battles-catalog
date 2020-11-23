@@ -45,6 +45,11 @@ import { DurationPipe } from './wars/table/duration.pipe';
 import { TooltipActorsPipe } from './wars/table/tooltip/tooltip-actors.pipe';
 import { TooltipArmySizesPipe } from './wars/table/tooltip/tooltip-army-sizes.pipe';
 import { TooltipArmyLossesPipe } from './wars/table/tooltip/tooltip-army-losses.pipe';
+import { BattleTableComponent } from './battles/table/battle-table.component';
+import { BattleDurationPipe } from './battles/battle-duration.pipe';
+import { BattleTooltipActorsPipe } from './battles/tooltip/battle-tooltip-actors.pipe';
+import { BattleTooltipArmySizesPipe } from './battles/tooltip/battle-tooltip-army-sizes.pipe';
+import { BattleTooltipArmyLossesPipe } from './battles/tooltip/battle-tooltip-army-losses.pipe';
 
 @NgModule({
   declarations: [
@@ -63,7 +68,12 @@ import { TooltipArmyLossesPipe } from './wars/table/tooltip/tooltip-army-losses.
     DurationPipe,
     TooltipActorsPipe,
     TooltipArmySizesPipe,
-    TooltipArmyLossesPipe
+    TooltipArmyLossesPipe,
+    BattleTableComponent,
+    BattleDurationPipe,
+    BattleTooltipActorsPipe,
+    BattleTooltipArmySizesPipe,
+    BattleTooltipArmyLossesPipe,
   ],
   imports: [
     BrowserModule,

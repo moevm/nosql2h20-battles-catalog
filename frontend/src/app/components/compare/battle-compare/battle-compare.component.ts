@@ -1,5 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { EChartOption } from 'echarts';
+import { BattlesService } from '../../../battles/battles.service';
+import { ArmySizesPipe } from '../../../wars/table/army-sizes.pipe';
+import { ArmyLossesPipe } from '../../../wars/table/army-losses.pipe';
 
 @Component({
   selector: 'app-battle-compare',
@@ -7,44 +10,6 @@ import { EChartOption } from 'echarts';
   styleUrls: ['./battle-compare.component.scss']
 })
 export class BattleCompareComponent implements OnInit {
-  wars = [
-    {
-      name: 'The seven year\'s war',
-      battles: 49,
-      duration: 7,
-      armySizes: 240000,
-      losses: 74593
-    },
-    {
-      name: 'Netherlands war of independence',
-      battles: 23,
-      duration: 14,
-      armySizes: 4242445,
-      losses: 2754000
-    },
-    {
-      name: 'Franco-spanish war',
-      battles: 34,
-      duration: 23,
-      armySizes: 240322,
-      losses: 59848
-    },
-    {
-      name: 'Monmouth\'s rebellion',
-      battles: 84,
-      duration: 2,
-      armySizes: 13002,
-      losses: 8342
-    },
-    {
-      name: 'Thirty year\'s war',
-      battles: 11,
-      duration: 33,
-      armySizes: 2400000,
-      losses: 1350290
-    }
-  ];
-
   chartsData: {[key: string]: EChartOption} = {
     duration: {},
     armySizes: {},
@@ -52,6 +17,8 @@ export class BattleCompareComponent implements OnInit {
   };
 
   @ViewChild('chart') chartWrapper: ElementRef<HTMLDivElement>;
+
+  constructor(private battles: BattlesService, private sizes: ArmySizesPipe, private losses: ArmyLossesPipe) {}
 
   ngOnInit(): void {
     const gridWidthPc = .8;
@@ -61,7 +28,15 @@ export class BattleCompareComponent implements OnInit {
     const letterWidthPx = 7.5;
     const ellipsisWidthPx = 11;
 
-    const warNameToColor = this.wars.reduce((map, war) => {
+    const wars = this.battles.selection.selected.map(b => ({
+      name: b.name,
+      // @ts-ignore
+      duration: (new Date(b.datetime_max) - new Date(b.datetime_min)) / 1000 / 60 / 60,
+      armySizes: this.sizes.transform(b.actors),
+      losses: this.losses.transform(b.actors)
+    }));
+
+    const warNameToColor = wars.reduce((map, war) => {
       map[war.name] = `hsl(${Math.random() * 360}, 100%, 40%)`;
       return map;
     }, {});
@@ -76,11 +51,11 @@ export class BattleCompareComponent implements OnInit {
         },
         xAxis: {
           type: 'category',
-          data: this.wars.map(war => war.name),
+          data: wars.map(war => war.name),
           axisLabel: {
             formatter: warName => {
               const gridWidthPx = this.chartWrapper.nativeElement.offsetWidth * gridWidthPc;
-              const barWidthPx = gridWidthPx / this.wars.length * .75 - ellipsisWidthPx; // * .85 to safety margin
+              const barWidthPx = gridWidthPx / wars.length * .75 - ellipsisWidthPx; // * .85 to safety margin
               const lettersAmount = Math.floor(barWidthPx / letterWidthPx);
               return `${warName.slice(0, lettersAmount)}...`;
             },
@@ -105,7 +80,7 @@ export class BattleCompareComponent implements OnInit {
           top: key === 'duration' ? '15%' : 60
         },
         series: [{
-          data: this.wars.map(war => ({
+          data: wars.map(war => ({
             value: war[key],
             itemStyle: {
               color: warNameToColor[war.name]

@@ -28,3 +28,11 @@
 .mat-drawer-side {
   min-width: 178px;
 }
+
+.mat-list-base::ng-deep .mat-list-item .mat-list-item-content {
+  justify-content: space-between;
+}
+
+.battles::ng-deep .mat-list-item-content {
+  padding-right: 4px !important;
+}

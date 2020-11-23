@@ -1,0 +1,102 @@
+@import '~@angular/material/theming';
+@import '~src/styles/shared/palettes';
+@import '~src/styles/shared/typography';
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.mat-card {
+  height: 100%;
+  overflow: hidden;
+  padding: 0;
+}
+
+.mat-card-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.mat-icon {
+  color: map-get($gray, 70);
+}
+
+.icon-primary {
+  color: map-get($primary, 600);
+}
+
+.projects-table {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.controls {
+  $action-offset: 4px;
+  border-top: 1px solid map-get($gray, 30);
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 10px;
+
+  .mat-button {
+    @include mat-typography-level-to-styles($pl-typography, button-3);
+    padding: 0 5px;
+  }
+
+  .mat-button:not(:last-child) {
+    margin-right: $action-offset;
+  }
+
+  & &__reset-filter.mat-button {
+    @include mat-typography-level-to-styles($pl-typography, button-2);
+  }
+
+  &__actions {
+    align-items: center;
+    display: flex;
+  }
+
+  &__delimiter {
+    background-color: map-get($gray, 30);
+    display: inline-block;
+    height: 20px;
+    margin-right: $action-offset;
+    width: 1px;
+  }
+}
+
+.search {
+  display: flex;
+  padding: 16px;
+
+  &__field {
+    flex-grow: 1;
+    margin-right: 16px;
+  }
+
+  &__field::ng-deep .mat-form-field-wrapper {
+    padding-bottom: 0;
+  }
+
+  &__field::ng-deep .mat-form-field-label-wrapper {
+    top: -.75em;
+  }
+
+  &__field::ng-deep .mat-form-field-underline {
+    bottom: -6px;
+  }
+
+  &__field::ng-deep .mat-form-field-infix {
+    border-top: 0;
+    top: 4px;
+  }
+
+  &__field::ng-deep .mat-form-field-suffix {
+    top: 3px;
+  }
+
+  &__button .mat-icon {
+    color: map-get($gray, 0);
+  }
+}
