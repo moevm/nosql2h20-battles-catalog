@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { IWars } from './interfaces/wars.interface';
 import { IWarsQuery } from './interfaces/wars-query.interface';
-import { distinctUntilChanged, map, take, tap } from 'rxjs/operators';
+import { distinctUntilChanged, map, shareReplay, take, tap } from 'rxjs/operators';
 import { SelectionModel } from '@angular/cdk/collections';
 import { IWar } from './interfaces/war.interface';
 
@@ -22,7 +22,10 @@ export class WarsService {
 
   constructor(private http: HttpClient) {
     this.list$ = this.list.pipe(distinctUntilChanged<IWars>());
-    this.namesList$ = this.list$.pipe(take<IWars>(1), map(list => list.items.map(war => war.name)));
+    this.namesList$ = this.http.get<IWars>('wars?limit=100000000000000000&page=1').pipe(
+      map(list => list.items.map(war => war.name)),
+      shareReplay(1)
+    );
     this.filterOptions$ = this.filterOptions.pipe(distinctUntilChanged());
   }
 

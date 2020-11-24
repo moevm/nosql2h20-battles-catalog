@@ -10,9 +10,10 @@ const sortMap = {
   dates: 'datetime_min',
   name: 'name',
   battles: 'battles_num',
-  'army-sizes': 'actors.initial_state',
-  losses: 'actors.casualties',
-  actors: 'actors.actor_name'
+  'army-sizes': 'total_state',
+  losses: 'total_casualties',
+  actors: 'actors.actor_name',
+  duration: 'duration'
 };
 
 export class TableDataSource extends DataSource<IWar> {

@@ -5,6 +5,6 @@ export interface IBattlesQuery {
   sort_dir?: number;
   name?: string[];
   actors?: string[];
-  wars?: string[];
+  war?: string[];
   search?: string;
 }

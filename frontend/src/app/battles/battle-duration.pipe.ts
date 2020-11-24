@@ -16,6 +16,6 @@ export class BattleDurationPipe implements PipeTransform {
     const diff = (end - start) / 1000 / 60 / 60;
 
     // @ts-ignore
-    return diff ? diff.toString() : '<1';
+    return diff >= 1 ? Math.round(diff).toString() : '<1';
   }
 }

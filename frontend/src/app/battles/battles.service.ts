@@ -3,9 +3,10 @@ import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { IBattles } from './interfaces/battles.interface';
 import { IBattlesQuery } from './interfaces/battles-query.interface';
-import { distinctUntilChanged, map, take, tap } from 'rxjs/operators';
+import { distinctUntilChanged, map, shareReplay, take, tap } from 'rxjs/operators';
 import { SelectionModel } from '@angular/cdk/collections';
 import { IBattle } from './interfaces/battle.interface';
+import { IWars } from '../wars/interfaces/wars.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,10 @@ export class BattlesService {
 
   constructor(private http: HttpClient) {
     this.list$ = this.list.pipe(distinctUntilChanged<IBattles>());
-    this.namesList$ = this.list$.pipe(take<IBattles>(1), map(list => list.items.map(war => war.name)));
+    this.namesList$ = this.http.get<IWars>('battles?limit=100000000000000000&page=1').pipe(
+      map(list => list.items.map(war => war.name)),
+      shareReplay(1)
+    );
     this.filterOptions$ = this.filterOptions.pipe(distinctUntilChanged());
   }
 
@@ -63,8 +67,8 @@ export class BattlesService {
     if (currentGetParams.sort && currentGetParams.sort_dir) {
       params.sort_dir = currentGetParams.sort_dir;
     }
-    if (currentGetParams.wars) {
-      params.wars = currentGetParams.wars;
+    if (currentGetParams.war) {
+      params.wars = currentGetParams.war.toString();
     }
 
     return this.http.get<IBattles>('battles', {params})

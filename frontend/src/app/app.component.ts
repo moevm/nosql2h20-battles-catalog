@@ -6,6 +6,7 @@ import { BattleCompareComponent } from './components/compare/battle-compare/batt
 import { ActivatedRoute, Router } from '@angular/router';
 import { WarsService } from './wars/wars.service';
 import { BattlesService } from './battles/battles.service';
+import { ExportModalComponent } from './components/export-modal/export-modal.component';
 
 @Component({
   selector: 'app-root',
@@ -18,8 +19,8 @@ export class AppComponent {
               public wars: WarsService,
               public battles: BattlesService) {}
 
-  openCreateBattleForm(): void {
-    this.dialog.open(CreateBattleFormComponent, {minWidth: '85%'});
+  openExportModal(): void {
+    this.dialog.open(ExportModalComponent, {minWidth: '85%'});
   }
 
   openCompareDialog(): void {

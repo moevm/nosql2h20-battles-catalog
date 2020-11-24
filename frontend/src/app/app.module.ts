@@ -50,6 +50,7 @@ import { BattleDurationPipe } from './battles/battle-duration.pipe';
 import { BattleTooltipActorsPipe } from './battles/tooltip/battle-tooltip-actors.pipe';
 import { BattleTooltipArmySizesPipe } from './battles/tooltip/battle-tooltip-army-sizes.pipe';
 import { BattleTooltipArmyLossesPipe } from './battles/tooltip/battle-tooltip-army-losses.pipe';
+import { ExportModalComponent } from './components/export-modal/export-modal.component';
 
 @NgModule({
   declarations: [
@@ -74,6 +75,7 @@ import { BattleTooltipArmyLossesPipe } from './battles/tooltip/battle-tooltip-ar
     BattleTooltipActorsPipe,
     BattleTooltipArmySizesPipe,
     BattleTooltipArmyLossesPipe,
+    ExportModalComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatColumnDef, MatTable } from '@angular/material/table';
-import { debounceTime, distinctUntilChanged, map, withLatestFrom } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, tap, withLatestFrom } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { MatSelectionList } from '@angular/material/list';
 import { SelectionModel } from '@angular/cdk/collections';
 import { WarsService } from '../../wars.service';
@@ -34,11 +34,14 @@ export class FilterHeaderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.options$ = this.search$.pipe(
-      debounceTime<string>(500),
-      distinctUntilChanged(),
-      withLatestFrom(this.source),
-      map(([search, options]) =>
+    this.options$ = combineLatest([
+      this.source,
+      this.search$.pipe(
+        debounceTime<string>(500),
+        distinctUntilChanged<string>()
+      )
+    ]).pipe(
+      map(([options, search]) =>
         options.filter(opt =>
           opt.toLocaleLowerCase().includes(search.toLowerCase())
         )
