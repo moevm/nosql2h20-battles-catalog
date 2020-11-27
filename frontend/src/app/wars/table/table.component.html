@@ -20,7 +20,6 @@
     <!-- Position Column -->
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        <app-filter-header [source]="wars.namesList$"></app-filter-header>
         Name
       </th>
       <td mat-cell *matCellDef="let row"> {{row.name}} </td>

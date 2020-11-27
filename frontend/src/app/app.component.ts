@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { WarsService } from './wars/wars.service';
 import { BattlesService } from './battles/battles.service';
 import { ExportModalComponent } from './components/export-modal/export-modal.component';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,8 @@ import { ExportModalComponent } from './components/export-modal/export-modal.com
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  exportUrl = `${environment.baseUrl}/export`;
+
   constructor(public dialog: MatDialog,
               public router: Router,
               public wars: WarsService,
@@ -27,6 +30,13 @@ export class AppComponent {
     this.dialog.open<any>(
       this.router.url.includes('wars') ? WarCompareComponent : BattleCompareComponent,
       {width: '95%', height: '95%'}
+    );
+  }
+
+  openCreateModal(): void {
+    this.dialog.open(
+      CreateBattleFormComponent,
+      {minWidth: '75%'}
     );
   }
 }

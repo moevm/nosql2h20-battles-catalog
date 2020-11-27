@@ -4,20 +4,20 @@
       <a mat-list-item routerLink="wars" class="link" routerLinkActive="active">Wars</a>
       <a mat-list-item routerLink="battles" class="link battles" routerLinkActive="active">
         Battles
-        <button mat-icon-button (click)="$event.stopPropagation(); $event.preventDefault()">
+        <button mat-icon-button (click)="openCreateModal()">
           <mat-icon svgIcon="add"></mat-icon>
         </button>
       </a>
     </mat-nav-list>
-    <button mat-flat-button color="primary" (click)="openExportModal()">
+    <a mat-flat-button color="primary" style="margin-top: auto" download [href]="exportUrl">
       <mat-icon svgIcon="file_download"></mat-icon>Export
-    </button>
+    </a>
     <button mat-flat-button color="primary"
             (click)="openCompareDialog()"
             [disabled]="(this.router.url.includes('wars') ? wars : battles).selection.isEmpty()">
       <mat-icon svgIcon="compare"></mat-icon>Compare
     </button>
-    <button mat-flat-button color="primary">
+    <button mat-flat-button color="primary" (click)="openExportModal()">
       <mat-icon svgIcon="file_upload"></mat-icon>Import
     </button>
   </mat-sidenav>

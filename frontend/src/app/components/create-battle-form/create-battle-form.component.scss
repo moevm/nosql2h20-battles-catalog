@@ -1,6 +1,6 @@
 .pl-label mat-label {
-  min-width: 85px;
-  max-width: 85px;
+  min-width: 115px;
+  max-width: 115px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -8,8 +8,18 @@
   line-height: 24px;
 }
 
+.pl-label:not(.actor-form__field) {
+  width: 100%;
+}
+
 .create-battle-form-field {
+  display: flex;
+  align-items: center;
   margin-bottom: 15px;
+
+  &.pl-label .mat-form-field {
+    flex-grow: 1;
+  }
 }
 
 .actor-form {
@@ -38,4 +48,9 @@
   .pl-label mat-label {
     margin-bottom: -9px;
   }
+}
+
+app-multiple-input[formControlName="commanders"]::ng-deep .mat-input-element {
+  min-height: 32px;
+  margin-bottom: 0;
 }
