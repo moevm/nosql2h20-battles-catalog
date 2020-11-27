@@ -5,10 +5,12 @@ import subprocess
 import tempfile
 from datetime import datetime
 from io import StringIO
-from typing import List
+from typing import List, Dict
+from functools import reduce
 
 import pandas as pd
-from fastapi import UploadFile
+from fastapi import UploadFile, HTTPException
+import dateutil.parser
 
 from .config import settings
 from .db import db
@@ -37,11 +39,12 @@ async def _uploaded_csv_to_dict(csv_file: UploadFile):
 
 async def db_get_battles(limit: int, page_num: int, sort_by: str, sort_dir: int, names: str, wars: str, actors: str,
                          search: str):
+
     if search is not None and names is not None:
-        raise Exception('query contains both "names" and "search" in GET /wars')
+        raise HTTPException(status_code=422, detail='query contains both "names" and "search" in GET /wars')
 
     query = {}
-    sort = []
+    sort = 'battle_id'
 
     if names is not None:
         query.update({
@@ -50,7 +53,7 @@ async def db_get_battles(limit: int, page_num: int, sort_by: str, sort_dir: int,
 
     if search is not None:
         query.update({
-            'name': {'$regex': f'.*{search}.*', '$options': 'i'}
+            'name': {'$regex': search, '$options': 'i'}
         })
 
     if wars is not None:
@@ -64,36 +67,34 @@ async def db_get_battles(limit: int, page_num: int, sort_by: str, sort_dir: int,
         })
 
     if sort_by is not None:
-        sort.append((sort_by, sort_dir))
-
-    skip_size = limit * (page_num - 1)
+        sort = [(sort_by, sort_dir)]
 
     total = await db[settings.MONGODB_COLLECTION].count_documents(query)
-    cursor = db[settings.MONGODB_COLLECTION].find(query, {'_id': 0}, sort=sort).skip(skip_size).limit(limit)
+    cursor = db[settings.MONGODB_COLLECTION].find(query, {'_id': 0}).sort(sort).skip(limit * (page_num - 1)).limit(limit)
     battles = await cursor.to_list(None)
     return battles, total
 
 
-def group_by_actor(actors):
+def group_by_actor(actors):        
     df_actors = pd.DataFrame(actors)
     df_actors = df_actors.groupby('actor_name', as_index=False).agg({
         'initial_state': 'sum',
         'casualties': 'sum',
         'army_name': lambda x: set(x),
-        'commander': lambda x: set(x),
+        'commander': lambda x: set(c for cc in [cc.split(',') for cc in x] for c in cc)
     })
     return df_actors.to_dict('records')
 
 
 async def db_get_wars(limit: int, page_num: int, sort_by: str, sort_dir: int, names: str, actors: str, search: str):
     if search is not None and names is not None:
-        raise Exception('query contains both "names" and "search" in GET /wars')
+        raise HTTPException(status_code=422, detail='query contains both "names" and "search" in GET /wars')
 
     query = {}
-    sort = 'datetime_min'
+    sort = {'datetime_min': sort_dir}
 
     if sort_by is not None:
-        sort = sort_by
+        sort = {sort_by: sort_dir}
 
     if names is not None:
         query.update({
@@ -102,7 +103,7 @@ async def db_get_wars(limit: int, page_num: int, sort_by: str, sort_dir: int, na
 
     if search is not None:
         query.update({
-            'name': {'$regex': f'.*{search}.*', '$options': 'i'}
+            'name': {'$regex': search, '$options': 'i'}
         })
 
     if actors is not None:
@@ -110,35 +111,44 @@ async def db_get_wars(limit: int, page_num: int, sort_by: str, sort_dir: int, na
             'actors': {'$elemMatch': {'actor_name': {'$in': actors.split(',')}}}
         })
 
-    # aggregate battles by war, count battles for each war and count wars
     cursor = db[settings.MONGODB_COLLECTION].aggregate([
-        {
-            '$unwind': '$actors',
-        },
         {
             '$group': {
                 '_id': '$war',
                 'actors': {'$push': '$actors'},
                 'datetime_min': {'$min': '$datetime_min'},
                 'datetime_max': {'$max': '$datetime_max'},
+                'total_state': {'$sum': '$total_state'},
+                'total_casualties': {'$sum': '$total_casualties'},
+                'duration': {'$sum': '$duration'},
                 'battles_num': {'$sum': 1},
             },
         },
+        {'$unwind': '$actors'},
+        {'$unwind': '$actors'},
         {
-            '$project': {
-                '_id': 0,
-                'name': '$_id',
-                'datetime_max': 1,
-                'datetime_min': 1,
-                'battles_num': {'$divide': ['$battles_num', 2]},
-                'actors': 1,
+            '$group': {
+                '_id': '$_id',
+                'actors': {'$push': '$actors'},
+                'datetime_min': {'$first': '$datetime_min'},
+                'datetime_max': {'$first': '$datetime_max'},
+                'total_state': {'$first': '$total_state'},
+                'total_casualties': {'$first': '$total_casualties'},
+                'battles_num': {'$first': '$battles_num'},
             }
         },
+        {
+            '$set': {
+                'name': '$_id',
+                'duration': { "$subtract": [ "$datetime_max", "$datetime_min" ] },
+            }
+        },
+        {'$project': {'_id': 0}},
         {'$match': query},
-        {'$sort': {sort: sort_dir}},
+        {'$sort': sort},
         {
             '$facet': {
-                'wars': [
+                'items': [
                     {'$skip': limit * (page_num - 1)},
                     {'$limit': limit}
                 ],
@@ -152,13 +162,14 @@ async def db_get_wars(limit: int, page_num: int, sort_by: str, sort_dir: int, na
     wars = await cursor.to_list(None)
     result_wars = wars[0]
 
-    for i in range(len(result_wars['wars'])):
-        result_wars['wars'][i]['actors'] = group_by_actor(result_wars['wars'][i]['actors'])
+    for i in range(len(result_wars['items'])):
+        result_wars['items'][i]['actors'] = group_by_actor(result_wars['items'][i]['actors'])
 
     total = 0
     if len(result_wars['total']) > 0:
         total = result_wars['total'][0]['count']
-    return result_wars['wars'], total
+
+    return result_wars['items'], total
 
 
 async def db_find_warname_battle(name: str, war: str):
@@ -210,6 +221,19 @@ async def db_import_csv(battle_csv_files: List[UploadFile]):
                 'as': 'actors'
             }
         },
+        {
+            '$set': { 
+                'total_state': {'$sum': '$actors.initial_state'},
+                'total_casualties': {'$sum': '$actors.casualties'},
+                'datetime_min': {'$toDate': '$datetime_min'},
+                'datetime_max': {'$toDate': '$datetime_max'},
+            }
+        },
+        {
+            '$set': { 
+                'duration': { "$subtract": [ "$datetime_max", "$datetime_min" ] },
+            }
+        },
         {'$unset': ['actors.battle_id', 'actors._id']},
         {'$out': settings.MONGODB_COLLECTION}
     ]).to_list(None)
@@ -227,7 +251,7 @@ async def db_export_csv(export_dir):
     ]).to_list(None)
 
     await db[settings.MONGODB_COLLECTION].aggregate([
-        {'$unset': "actors"},
+        {'$unset': ['actors', 'total_state', 'total_casualties', 'duration']},
         {'$project': {'_id': 0}},
         {'$out': "export_battles"}
     ]).to_list(None)
@@ -263,3 +287,45 @@ async def db_export_csv(export_dir):
 
 async def db_find_unique_actors():
     return await db[settings.MONGODB_COLLECTION].distinct("actors.actor_name")
+
+
+def rename_fields(battle: Dict) -> Dict:
+    battle['datetime_min'] = dateutil.parser.parse(battle.pop('start'))
+    battle['datetime_max'] = dateutil.parser.parse(battle.pop('end'))
+
+    for i, actor in enumerate(battle['actors']):
+        actor['actor_name'] = actor.pop('name')
+        actor['army_name'] = actor.pop('armyName')
+        actor['initial_state'] = actor.pop('size')
+        actor['casualties'] = actor.pop('losses')
+        actor['commander'] = ','.join(actor.pop('commanders'))
+        actor['is_winner'] = actor.pop('isWinner')
+        battle['actors'][i] = actor
+
+    return battle
+
+
+async def db_create_battle(battle: Dict):
+    battle_exits = await db_find_warname_battle(battle['name'], battle['war'])
+    if battle_exits:
+        raise HTTPException(status_code=422, detail='battle with provided "name" and "war" already exists')
+
+    battle = rename_fields(battle)
+    max_battle_id_res = await db[settings.MONGODB_COLLECTION].aggregate([{
+        '$group': {
+            '_id': 'null',
+            'battle_id': {'$max': '$battle_id'}
+            }
+        }
+    ]).to_list(None)
+
+    battle['battle_id'] = max_battle_id_res[0]['battle_id'] + 1 if len(max_battle_id_res) > 0 else 1
+
+    total_state, total_casualties = reduce(lambda total, actor: (total[0] + actor['initial_state'], total[1] + actor['casualties']), battle['actors'], (0, 0))
+    battle['total_state'] = total_state
+    battle['total_casualties'] = total_casualties
+    battle['duration'] = int((battle['datetime_max'] - battle['datetime_min']).total_seconds() * 1000)
+
+    result = await db[settings.MONGODB_COLLECTION].insert_one(battle)
+    return result.inserted_id
+

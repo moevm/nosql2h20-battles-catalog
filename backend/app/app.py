@@ -1,6 +1,6 @@
 import os
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
@@ -41,8 +41,4 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     await rmdir(settings.TEMP_DIR)
-
-
-@app.exception_handler(Exception)
-async def exception_handler(r: Request, e: Exception):
-    return error_response(f'Server error, got: {e}')
+    
