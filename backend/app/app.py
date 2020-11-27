@@ -41,8 +41,4 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     await rmdir(settings.TEMP_DIR)
-
-
-# @app.exception_handler(HTTPException)
-# async def exception_handler(r: Request, e: HTTPException):
-#     return error_response(f'Server error, got: {e}')
+    
