@@ -5,10 +5,12 @@ import subprocess
 import tempfile
 from datetime import datetime
 from io import StringIO
-from typing import List
+from typing import List, Dict
+from functools import reduce
 
 import pandas as pd
-from fastapi import UploadFile
+from fastapi import UploadFile, HTTPException
+import dateutil.parser
 
 from .config import settings
 from .db import db
@@ -39,7 +41,7 @@ async def db_get_battles(limit: int, page_num: int, sort_by: str, sort_dir: int,
                          search: str):
 
     if search is not None and names is not None:
-        raise Exception('query contains both "names" and "search" in GET /wars')
+        raise HTTPException(status_code=422, detail='query contains both "names" and "search" in GET /wars')
 
     query = {}
     sort = 'battle_id'
@@ -73,20 +75,20 @@ async def db_get_battles(limit: int, page_num: int, sort_by: str, sort_dir: int,
     return battles, total
 
 
-def group_by_actor(actors):
+def group_by_actor(actors):        
     df_actors = pd.DataFrame(actors)
     df_actors = df_actors.groupby('actor_name', as_index=False).agg({
         'initial_state': 'sum',
         'casualties': 'sum',
         'army_name': lambda x: set(x),
-        'commander': lambda x: set(x),
+        'commander': lambda x: set(c for cc in [cc.split(',') for cc in x] for c in cc)
     })
     return df_actors.to_dict('records')
 
 
 async def db_get_wars(limit: int, page_num: int, sort_by: str, sort_dir: int, names: str, actors: str, search: str):
     if search is not None and names is not None:
-        raise Exception('query contains both "names" and "search" in GET /wars')
+        raise HTTPException(status_code=422, detail='query contains both "names" and "search" in GET /wars')
 
     query = {}
     sort = {'datetime_min': sort_dir}
@@ -127,7 +129,7 @@ async def db_get_wars(limit: int, page_num: int, sort_by: str, sort_dir: int, na
         {
             '$group': {
                 '_id': '$_id',
-                'actors': {'$addToSet': '$actors'},
+                'actors': {'$push': '$actors'},
                 'datetime_min': {'$first': '$datetime_min'},
                 'datetime_max': {'$first': '$datetime_max'},
                 'total_state': {'$first': '$total_state'},
@@ -285,3 +287,45 @@ async def db_export_csv(export_dir):
 
 async def db_find_unique_actors():
     return await db[settings.MONGODB_COLLECTION].distinct("actors.actor_name")
+
+
+def rename_fields(battle: Dict) -> Dict:
+    battle['datetime_min'] = dateutil.parser.parse(battle.pop('start'))
+    battle['datetime_max'] = dateutil.parser.parse(battle.pop('end'))
+
+    for i, actor in enumerate(battle['actors']):
+        actor['actor_name'] = actor.pop('name')
+        actor['army_name'] = actor.pop('armyName')
+        actor['initial_state'] = actor.pop('size')
+        actor['casualties'] = actor.pop('losses')
+        actor['commander'] = ','.join(actor.pop('commanders'))
+        actor['is_winner'] = actor.pop('isWinner')
+        battle['actors'][i] = actor
+
+    return battle
+
+
+async def db_create_battle(battle: Dict):
+    battle_exits = await db_find_warname_battle(battle['name'], battle['war'])
+    if battle_exits:
+        raise HTTPException(status_code=422, detail='battle with provided "name" and "war" already exists')
+
+    battle = rename_fields(battle)
+    max_battle_id_res = await db[settings.MONGODB_COLLECTION].aggregate([{
+        '$group': {
+            '_id': 'null',
+            'battle_id': {'$max': '$battle_id'}
+            }
+        }
+    ]).to_list(None)
+
+    battle['battle_id'] = max_battle_id_res[0]['battle_id'] + 1 if len(max_battle_id_res) > 0 else 1
+
+    total_state, total_casualties = reduce(lambda total, actor: (total[0] + actor['initial_state'], total[1] + actor['casualties']), battle['actors'], (0, 0))
+    battle['total_state'] = total_state
+    battle['total_casualties'] = total_casualties
+    battle['duration'] = int((battle['datetime_max'] - battle['datetime_min']).total_seconds() * 1000)
+
+    result = await db[settings.MONGODB_COLLECTION].insert_one(battle)
+    return result.inserted_id
+

@@ -9,7 +9,8 @@ from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 
 from .config import settings
 from .utils import db_import_csv, db_get_battles, db_get_wars, db_find_warname_battle, db_export_csv, \
-    db_find_unique_actors, rmdir
+    db_find_unique_actors, db_create_battle, rmdir
+from .models import BattleModel
 
 router = APIRouter()
 
@@ -52,6 +53,17 @@ async def battle_exists(name: str, war: str):
     return {
         'battle': battle,
         'exists': battle is not None
+    }
+
+
+@router.post('/battle/create')
+async def import_battle_files(battle: BattleModel):
+    res = await db_create_battle(battle.dict())
+    if res is None:
+        return { 'message': 'create failed' }
+
+    return {
+        'message': 'battle created'
     }
 
 
