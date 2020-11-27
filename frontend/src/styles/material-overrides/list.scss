@@ -1,5 +1,51 @@
-@import '~src/styles/typography';
+@import '../shared/typography';
+@import '../shared/variables';
+@import '../shared/palettes';
 
-.prolift .mat-list-base .mat-list-item {
-  font-size: map-get($subheading-1, font-size);
+.mat-list-base .mat-list-item {
+  @include mat-typography-level-to-styles($pl-typography, subheading-3);
+}
+
+.mat-nav-list {
+  padding-top: 0;
+
+}
+
+.mat-nav-list .mat-list-item {
+  position: relative;
+
+  &::before {
+    background: map-get($primary-opacity, 5);
+    content: ' ';
+    height: 100%;
+    left: 0;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    transform: translateX(-100%);
+    transition: transform $transition-duration, opacity $transition-duration;
+    width: 100%;
+  }
+
+  &.active::before {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  &::after {
+    $padding: 10px;
+    background: map-get($primary-opacity, 100);
+    content: ' ';
+    height: 100%;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    transition: left $transition-duration $timing-fn $transition-duration,
+      opacity $transition-duration $timing-fn $transition-duration;
+    width: 3px;
+  }
+
+  &.active::after {
+    opacity: 1;
+  }
 }

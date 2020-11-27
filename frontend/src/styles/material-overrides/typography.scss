@@ -1,0 +1,35 @@
+@import '../shared/typography';
+
+/* stylelint-disable selector-class-pattern */
+.pl-body-3 {
+  @include mat-typography-level-to-styles($pl-typography, body-3);
+}
+
+.pl-body-4 {
+  @include mat-typography-level-to-styles($pl-typography, body-4);
+}
+
+.pl-body-5 {
+  @include mat-typography-level-to-styles($pl-typography, body-5);
+}
+
+.pl-body-6 {
+  @include mat-typography-level-to-styles($pl-typography, body-6);
+}
+
+.pl-button-2 {
+  @include mat-typography-level-to-styles($pl-typography, button-2);
+}
+
+.pl-button-3 {
+  @include mat-typography-level-to-styles($pl-typography, button-3);
+}
+
+.pl-subheading-3 {
+  @include mat-typography-level-to-styles($pl-typography, subheading-3);
+}
+
+.pl-subheading-4 {
+  @include mat-typography-level-to-styles($pl-typography, subheading-4);
+}
+/* stylelint-enable selector-class-pattern*/

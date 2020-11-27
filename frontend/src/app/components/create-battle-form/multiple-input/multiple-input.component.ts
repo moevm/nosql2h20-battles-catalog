@@ -97,7 +97,7 @@ export class MultipleInputComponent extends ValueAccessor implements OnInit, Aft
   }
 
   private _filter(value: string | null): string[] {
-    return this.allItems.filter(item =>
+    return this.allItems?.filter(item =>
       !value || item.toLowerCase().indexOf(value.toLowerCase()) === 0
     );
   }

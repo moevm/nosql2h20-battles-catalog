@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CreateBattleFormService } from './create-battle-form.service';
+import { HttpClient } from '@angular/common/http';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-create-battle-form',
@@ -12,7 +14,9 @@ export class CreateBattleFormComponent {
 
   form: FormGroup;
 
-  constructor(public service: CreateBattleFormService) {
+  constructor(public service: CreateBattleFormService,
+              private http: HttpClient,
+              private dialogRef: MatDialogRef<CreateBattleFormComponent>) {
     service.get();
 
     this.form = new FormGroup({
@@ -50,6 +54,18 @@ export class CreateBattleFormComponent {
   }
 
   onSubmit(): void {
-    console.log(this.form.value);
+    if (this.form.valid) {
+      const value = this.form.value;
+      this.http.post('battle/create', {
+        name: value.name,
+        war: value.war,
+        start: value.start,
+        end: value.end,
+        actors: value.actors.map((actorName, i) => ({
+          name: actorName,
+          ...value.actorsData[i]
+        }))
+      }).subscribe(() => this.dialogRef.close());
+    }
   }
 }

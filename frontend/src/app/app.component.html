@@ -1,3 +1,27 @@
-<button mat-flat-button (click)="openCreateBattleForm()" class="pl-button--secondary">open form</button>
-<button mat-flat-button (click)="openWarCompare()" class="pl-button--secondary">open war compare</button>
-<button mat-flat-button (click)="openBattleCompare()" class="pl-button--secondary">open battle compare</button>
+<mat-sidenav-container>
+  <mat-sidenav mode="side" opened disableClose="true">
+    <mat-nav-list>
+      <a mat-list-item routerLink="wars" class="link" routerLinkActive="active">Wars</a>
+      <a mat-list-item routerLink="battles" class="link battles" routerLinkActive="active">
+        Battles
+        <button mat-icon-button (click)="openCreateModal()">
+          <mat-icon svgIcon="add"></mat-icon>
+        </button>
+      </a>
+    </mat-nav-list>
+    <a mat-flat-button color="primary" style="margin-top: auto" download [href]="exportUrl">
+      <mat-icon svgIcon="file_download"></mat-icon>Export
+    </a>
+    <button mat-flat-button color="primary"
+            (click)="openCompareDialog()"
+            [disabled]="(this.router.url.includes('wars') ? wars : battles).selection.isEmpty()">
+      <mat-icon svgIcon="compare"></mat-icon>Compare
+    </button>
+    <button mat-flat-button color="primary" (click)="openExportModal()">
+      <mat-icon svgIcon="file_upload"></mat-icon>Import
+    </button>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

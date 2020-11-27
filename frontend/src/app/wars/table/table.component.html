@@ -1,0 +1,83 @@
+<div class="scroll-wrapper">
+  <table mat-table [dataSource]="dataSource" matSort>
+
+    <!-- Checkbox Column -->
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-checkbox *ngIf="wars.selection.hasValue()"
+                      (change)="$event ? wars.selection.clear() : null"
+                      [indeterminate]="wars.selection.hasValue()">
+        </mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <mat-checkbox (click)="$event.stopPropagation()"
+                      (change)="$event ? wars.selection.toggle(row) : null"
+                      [checked]="wars.selection.isSelected(row)">
+        </mat-checkbox>
+      </td>
+    </ng-container>
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Name
+      </th>
+      <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="dates">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Dates
+      </th>
+      <td mat-cell *matCellDef="let row"> {{row.datetime_min | date}} - {{row.datetime_max | date}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="duration">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Duration
+      </th>
+      <td mat-cell *matCellDef="let row"> {{row | duration}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="battles">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Battles
+      </th>
+      <td mat-cell *matCellDef="let row"> {{row.battles_num}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actors">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        <app-filter-header [source]="actors.list$"></app-filter-header>
+        Actors
+      </th>
+      <td mat-cell *matCellDef="let row" [matTooltip]="row.actors | tooltipActors">
+        {{row.actors | actors}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="army-sizes">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Army sizes
+      </th>
+      <td mat-cell *matCellDef="let row" [matTooltip]="row.actors | tooltipArmySizes">
+        {{row.actors | armySizes}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="losses">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Losses </th>
+      <td mat-cell *matCellDef="let row" [matTooltip]="row.actors | tooltipArmyLosses">
+        {{row.actors | armyLosses}}
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns;"
+        [class.pl-selected-row]="wars.selection.isSelected(row)"
+        (click)="wars.selection.toggle(row)">
+    </tr>
+  </table>
+</div>
+<mat-paginator [pageSizeOptions]="pageSizes"></mat-paginator>

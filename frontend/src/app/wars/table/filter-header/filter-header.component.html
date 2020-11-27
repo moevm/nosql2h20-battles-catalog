@@ -1,0 +1,50 @@
+<button #button
+        *ngIf="filter$ | async as activeFilter"
+        (click)="open($event, activeFilter)"
+        class="filter-button"
+        [class.active]="activeFilter.length"
+        mat-icon-button>
+  <mat-icon svgIcon="sort"></mat-icon>
+</button>
+<ng-template #filter>
+  <div class="filter-container">
+    <div class="pl-subheading-3 filter-body">
+      <mat-form-field class="filter-search-field" floatLabel="never">
+        <mat-icon matPrefix svgIcon="search"></mat-icon>
+        <input (input)="search($event)" matInput placeholder="Search" type="text">
+      </mat-form-field>
+      <ng-container *ngIf="options$ | async as list">
+        <mat-list>
+          <mat-list-item>
+            <mat-checkbox *ngIf="list.length; else noAvailableFilters"
+                    (change)="$event ? masterToggle(list) : null" [checked]="selection.hasValue() && isAllSelected(list)"
+                          [indeterminate]="selection.hasValue() && !isAllSelected(list)"
+                          class="filter-select-all">
+              Select All
+            </mat-checkbox>
+            <ng-template #noAvailableFilters>
+              No available filters
+            </ng-template>
+          </mat-list-item>
+        </mat-list>
+        <mat-divider></mat-divider>
+        <mat-selection-list #selectionList
+                            (selectionChange)="selection.toggle($event.option.value)"
+                            class="filter-options"
+                            color="primary">
+          <mat-list-option *ngFor="let opt of list"
+                           [selected]="selection.selected.includes(opt)"
+                           [value]="opt"
+                           checkboxPosition="before">
+            {{opt}}
+          </mat-list-option>
+        </mat-selection-list>
+        <mat-divider></mat-divider>
+      </ng-container>
+    </div>
+    <mat-dialog-actions>
+      <button (click)="selection.clear(); apply()" color="primary" mat-button>Clear all</button>
+      <button (click)="apply()" color="primary" mat-flat-button>Apply</button>
+    </mat-dialog-actions>
+  </div>
+</ng-template>

@@ -1,0 +1,68 @@
+@import '~@angular/material/theming';
+@import '~src/styles/shared/palettes';
+@import '~src/styles/shared/variables';
+@import '~src/styles/shared/typography';
+
+:host {
+  cursor: pointer;
+  position: relative;
+}
+
+.user {
+  @include mat-typography-level-to-styles($pl-typography, subheading-4);
+  align-items: center;
+  color: map-get($gray, 110);
+  padding-right: 8px;
+  text-transform: capitalize;
+  transition: color $transition-duration;
+
+  &.opened,
+  &.opened .user__arrow {
+    color: map-get($primary, 600);
+  }
+}
+
+.user__arrow {
+  color: map-get($gray, 70);
+  transition: color $transition-duration;
+}
+
+.user__menu-item {
+  box-sizing: border-box;
+  display: flex;
+  height: 34px;
+  padding: 0;
+
+  a {
+    align-items: center;
+    color: $text-color;
+    display: flex;
+    padding: 0 16px;
+    text-decoration: none;
+    width: 100%;
+  }
+
+  ::ng-deep .mat-icon {
+    height: auto;
+    width: auto;
+  }
+
+  ::ng-deep svg {
+    width: 18px;
+  }
+
+  &--logout {
+    border-top: 1px solid map-get($gray, 30);
+  }
+}
+
+/* stylelint-disable-next-line selector-max-compound-selectors */
+::ng-deep .prolift .user-menu-panel .mat-menu-content:not(:empty) {
+  padding-bottom: 6px;
+  padding-top: 6px;
+}
+
+::ng-deep .prolift .user-menu-panel {
+  max-width: none;
+  min-width: 157px;
+}

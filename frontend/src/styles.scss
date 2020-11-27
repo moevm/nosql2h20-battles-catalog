@@ -59,4 +59,6 @@ body {
   margin: 0;
 }
 
-@import 'styles/material-overrides';
+.prolift {
+  @import 'styles/material-overrides';
+}

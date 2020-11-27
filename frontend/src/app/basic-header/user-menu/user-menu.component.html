@@ -1,0 +1,32 @@
+<button [matMenuTriggerFor]="menu"
+        #menuTrigger="matMenuTrigger"
+        class="user pl-button--small"
+        [class.opened]="menuTrigger.menuOpen"
+        mat-button
+        *ngIf="(auth.user$ | async) as user">
+  {{user.full_name}}
+  <mat-icon class="user__arrow" svgIcon="keyboard_arrow_down"></mat-icon>
+</button>
+
+<mat-menu #menu="matMenu" class="user-menu-panel">
+  <div mat-menu-item class="user__menu-item">
+    <a href="#">
+      <span>Profile</span>
+    </a>
+  </div>
+  <div mat-menu-item class="user__menu-item">
+    <a href="#">
+      <span>Support</span>
+    </a>
+  </div>
+  <div mat-menu-item class="user__menu-item">
+    <a href="#">
+      <span>Contact us</span>
+    </a>
+  </div>
+  <div mat-menu-item class="user__menu-item user__menu-item--logout">
+    <a (click)="auth.logout()">
+      <span>Log out</span>
+    </a>
+  </div>
+</mat-menu>

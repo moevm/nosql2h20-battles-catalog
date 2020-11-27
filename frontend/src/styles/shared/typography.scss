@@ -1,0 +1,37 @@
+@import '../../../node_modules/@angular/material/theming';
+
+/* stylelint-disable function-parentheses-space-inside */
+$pl-typography: map-merge(
+  mat-typography-config(
+    $font-family: 'Inter, sans-serif',
+
+    $display-4: mat-typography-level(30px, 36px, 500),
+    $display-3: mat-typography-level(24px, 24px, 500, $letter-spacing: .18px),
+    $display-2: mat-typography-level(18px, 24px, 500, $letter-spacing: .15px),
+    $display-1: mat-typography-level(14px, 24px, 500),
+
+    $headline: mat-typography-level(30px, 36px, 500),
+    $title: mat-typography-level(23px, 23px, 500, $letter-spacing: .18px),
+    $subheading-2: mat-typography-level(18px, 24px, 500, $letter-spacing: .15px),
+    $subheading-1: mat-typography-level(14px, 24px, 500),
+
+    $body-1: mat-typography-level(12px, 18px, 400),
+    $body-2: mat-typography-level(12px, 18px, 500),
+
+    $button: mat-typography-level(14px, 20px, 500, $letter-spacing: .5px),
+    $input: mat-typography-level(12px, 1.15, 400)
+  ), (
+    // prolift typography extensions
+    subheading-3: mat-typography-level(14px, 24px, 400, 'Inter, sans-serif'),
+    subheading-4: mat-typography-level(13px, 24px, 500, 'Inter, sans-serif', $letter-spacing: .1px),
+    body-3: mat-typography-level(13px, 18px, 400, 'Inter, sans-serif', $letter-spacing: .25px),
+    body-4: mat-typography-level(12px, 18px, 400, 'Inter, sans-serif', $letter-spacing: .5px),
+    body-5: mat-typography-level(13px, 1.5, 500, 'Inter, sans-serif', $letter-spacing: .5px),
+    body-6: mat-typography-level(13px, 20px, 400, 'Inter, sans-serif', $letter-spacing: .5px),
+    // button-2 & button-3 without line-height cause button' line-height sets in material-overrides/button.scss
+    button-2: mat-typography-level(13px, null, 500, 'Inter, sans-serif', $letter-spacing: .5px),
+    button-3: mat-typography-level(13px, null, 400, 'Inter, sans-serif', $letter-spacing: .5px),
+    input-number: mat-typography-level(12px, 13px, 400, 'Roboto', $letter-spacing: .5px)
+  )
+);
+/* stylelint-enable function-parentheses-space-inside */

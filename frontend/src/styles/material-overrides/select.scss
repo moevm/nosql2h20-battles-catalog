@@ -1,23 +1,12 @@
-@import '../palettes';
-@import '../variables';
+@import '../shared/palettes';
+@import '../shared/variables';
 
 $select-height: 32px;
 
-.prolift .mat-form-field.mat-form-field-appearance-outline {
-  .mat-select {
-    margin-top: -2px;
-  }
-
-  .mat-select-value {
-    box-sizing: border-box;
-    height: $select-height;
-    padding-left: 12px;
-    padding-right: 12px;
-    padding-top: 7px;
-  }
-
+.mat-form-field.mat-form-field-appearance-legacy {
   .mat-select-arrow-wrapper {
-    transform: translate(-8px, -2px) rotate(-45deg);
+    padding-left: 6px;
+    transform: translate(-3px, 0) rotate(-45deg);
   }
 
   .mat-select-arrow {
@@ -34,29 +23,21 @@ $select-height: 32px;
     transition: border-color $transition-duration;
     width: 6px;
   }
+
+  .mat-select[aria-expanded='true'] .mat-select-arrow-wrapper::after,
+  &.mat-focused .mat-select .mat-select-arrow-wrapper::after {
+    border-color: map-get($primary, 600);
+  }
+
+  &.mat-form-field-invalid .mat-select[aria-expanded='true'] .mat-select-arrow-wrapper::after,
+  &.mat-focused.mat-form-field-invalid .mat-select .mat-select-arrow-wrapper::after,
+  &.mat-form-field-invalid .mat-select .mat-select-arrow-wrapper::after {
+    border-color: map-get($warn, 500);
+  }
 }
 
-// stylelint-disable-next-line selector-max-compound-selectors
-.prolift .mat-form-field .mat-select[aria-expanded='true'] .mat-select-arrow-wrapper::after,
-.prolift .mat-form-field.mat-focused .mat-select .mat-select-arrow-wrapper::after {
-  border-color: map-get($primary, 600);
-}
-
-// stylelint-disable-next-line selector-max-compound-selectors
-.prolift .mat-form-field.mat-form-field-invalid .mat-select[aria-expanded='true'] .mat-select-arrow-wrapper::after,
-.prolift .mat-form-field.mat-focused.mat-form-field-invalid .mat-select .mat-select-arrow-wrapper::after,
-.prolift .mat-form-field.mat-form-field-invalid .mat-select .mat-select-arrow-wrapper::after {
-  border-color: map-get($warn, 500);
-}
-
-.prolift .mat-form-field.mat-form-field-disabled .mat-form-field-flex {
-  background-color: map-get($gray, 10);
-}
-
-
-$select-option-height: 34px;
-
-.prolift .mat-select-panel {
+.mat-select-panel {
+  $select-option-height: 34px;
   max-height: $select-option-height * 6;
 
   &:focus {

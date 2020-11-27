@@ -1,16 +1,15 @@
-@import '../palettes';
+@import '../shared/palettes';
 
-.prolift .mat-checkbox .mat-checkbox-frame {
-  border-color: map-get($gray, 70);
+.mat-checkbox .mat-checkbox-frame {
   border-radius: 3px;
   border-width: 1px;
 }
 
-.prolift .mat-checkbox.mat-checkbox-disabled .mat-checkbox-frame {
+.mat-checkbox.mat-checkbox-disabled .mat-checkbox-frame {
   background-color: map-get($gray, 10);
   border-color: map-get($gray, 60);
 }
 
-.prolift .mat-checkbox.mat-checkbox-disabled.mat-checkbox-checked .mat-checkbox-background {
+.mat-checkbox.mat-checkbox-disabled.mat-checkbox-checked .mat-checkbox-background {
   background-color: map-get($primary-opacity, 50);
 }

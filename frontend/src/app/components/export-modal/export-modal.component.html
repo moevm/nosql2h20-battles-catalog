@@ -1,0 +1,46 @@
+<h1 mat-dialog-title>Импорт данных</h1>
+
+<mat-dialog-content>
+  <h2>Общие требования к файлам для импорта</h2>
+  <ol>
+    <li>Формат - csv, разделитель - запятая</li>
+    <li>Количество файлов - 2, названия - "battles.csv", "actors.csv"</li>
+  </ol>
+
+  <h2>Требования к формату файлов</h2>
+  <p>Колонки файла battles.csv (описание битв):</p>
+  <ol>
+    <li>battle_id - уникальный id битвы</li>
+    <li>war - название войны, к которой относится битва - строка</li>
+    <li>name - название битвы - строка</li>
+    <li>datetime_min - дата и время начала битвы в формате ISO 8061 - строка</li>
+    <li>datetime_max - дата и время конца битвы в формате ISO 8061 - строка</li>
+  </ol>
+  <p>Колонки файла actors.csv (описание сторон битв):</p>
+  <ol>
+    <li>battle_id - id битвы, к которой относится запись о стороне</li>
+    <li>actor_name - название стороны - строка</li>
+    <li>is_winner - является ли сторона победителем - number (1 - да, 0 - нет, 0 у всех акторов = ничья)</li>
+    <li>army_name - название армии атакующей стороны - строка</li>
+    <li>initial_state - численность армии стороны на момент начала битвы - число</li>
+    <li>casualties - потери стороны в битве - число</li>
+    <li>commander - имя командира армии стороны - строка</li>
+  </ol>
+
+  <h2>Пример данных</h2>
+  <a href="https://drive.google.com/drive/folders/1XSvqLMKoipqsbyHps_luvOkVj1JSfd9y?usp=sharing">
+    Ссылка на подготовленные файлы
+  </a>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <form style="visibility: hidden" [action]="uploadUrl" enctype="multipart/form-data" method="post">
+    <input name="files" accept=".csv" type="file" (change)="onFilesChange($event)" multiple id="files">
+  </form>
+  <button mat-flat-button mat-dialog-close color="primary">Cancel</button>
+  <button mat-flat-button color="primary" class="label-button">
+    <label for="files">
+      Import
+    </label>
+  </button>
+</mat-dialog-actions>

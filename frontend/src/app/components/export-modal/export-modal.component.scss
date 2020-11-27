@@ -1,0 +1,16 @@
+.mat-dialog-content {
+  max-height: none !important;
+}
+
+.label-button {
+  padding: 0;
+
+  &::ng-deep .mat-button-wrapper {
+    display: flex;
+  }
+
+  label {
+    padding: 0 16px;
+    cursor: pointer;
+  }
+}

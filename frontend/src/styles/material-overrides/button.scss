@@ -1,78 +1,80 @@
 @import '~@angular/material/theming';
 
-@import '../palettes';
-@import '../variables';
+@import '../shared/palettes';
+@import '../shared/variables';
+@import '../shared/typography';
 
-.prolift .mat-button-base {
-  border-radius: 4px;
+.mat-button-base {
   line-height: 32px;
   transition: box-shadow $transition-duration, background-color $transition-duration;
 }
 
-.prolift {
-  // size
-  .pl-button--small {
-    line-height: 28px;
-  }
+// size
+.pl-button--small {
+  line-height: 28px;
+}
 
-  .pl-button--large {
-    line-height: 40px;
-  }
+.pl-button--large {
+  line-height: 40px;
+}
 
-  // type
-  .pl-button--secondary {
-    background-color: map-get($primary-opacity, 10);
-    color: map-get($primary, 600);
-  }
+// type
+.pl-button--secondary {
+  background-color: map-get($primary-opacity, 10);
+  color: map-get($primary, 600);
+}
 
-  .mat-button {
-    background-color: transparent;
-  }
+.mat-button {
+  background-color: transparent;
+}
 
-  .mat-stroked-button {
-    border: 1px solid map-get($primary, 600);
-  }
+.mat-stroked-button {
+  border: 1px solid map-get($primary, 600);
+}
 
-  .mat-flat-button:hover:not(:disabled),
-  .pl-button--secondary:hover:not(:disabled) {
-    @include mat-elevation(2);
-  }
+.mat-flat-button:hover:not(:disabled),
+.pl-button--secondary:hover:not(:disabled) {
+  @include mat-elevation(2);
+}
 
-  .mat-button:hover:not(:disabled),
-  .mat-stroked-button:hover:not(:disabled) {
-    background-color: map-get($primary-opacity, 5);
-  }
+.mat-button:hover:not(:disabled),
+.mat-stroked-button:hover:not(:disabled) {
+  background-color: map-get($primary-opacity, 5);
+}
 
-  // ripple
-  .pl-button--secondary .mat-ripple-element {
-    background-color: rgba(map-get($primary, 600), .1);
-  }
+// ripple
+.pl-button--secondary .mat-ripple-element {
+  background-color: rgba(map-get($primary, 600), .1);
+}
 
-  // disabled
-  .mat-flat-button:disabled {
-    background-color: map-get($gray, 60);
-    color: map-get($gray, 0);
-  }
+// disabled
+.mat-flat-button:disabled {
+  color: map-get($gray, 0);
+}
 
-  .pl-button--secondary:disabled,
-  .mat-button:disabled,
-  .mat-stroked-button:disabled {
-    color: map-get($gray, 60);
-  }
+.pl-button--secondary:disabled {
+  background-color: map-get($gray, 10);
+  color: map-get($gray, 60);
+}
 
-  .pl-button--secondary:disabled {
-    background-color: map-get($gray, 10);
-  }
+.mat-button:disabled {
+  background-color: transparent;
+}
 
-  .mat-button:disabled {
-    background-color: transparent;
-  }
+.mat-stroked-button:disabled {
+  border-color: map-get($gray, 60);
+}
 
-  .mat-stroked-button:disabled {
-    border-color: map-get($gray, 60);
-  }
+.mat-button,
+.mat-raised-button,
+.mat-icon-button,
+.mat-stroked-button,
+.mat-flat-button,
+.mat-fab,
+.mat-mini-fab {
+  letter-spacing: mat-letter-spacing($pl-typography, button);
 
   .mat-icon {
-    margin-top: -2px; // material doesn't vertical align 24x24 icons by default
+    margin-top: -2px;
   }
 }

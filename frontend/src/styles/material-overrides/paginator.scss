@@ -1,0 +1,47 @@
+@import '~@angular/material/theming';
+@import '../shared/palettes';
+@import '../shared/typography';
+
+.mat-paginator {
+  @include mat-typography-level-to-styles($pl-typography, subheading-3);
+
+  .mat-form-field-wrapper {
+    padding-bottom: 0;
+  }
+
+  .mat-form-field-appearance-legacy .mat-form-field-underline {
+    bottom: 0;
+  }
+
+  .mat-paginator-page-size-select {
+    margin-top: 0;
+  }
+
+  .mat-paginator-page-size .mat-select-trigger {
+    font-size: mat-font-size($pl-typography, subheading-3);
+  }
+
+  .mat-form-field-appearance-legacy .mat-form-field-infix {
+    border-top-width: 0;
+    padding-top: 5px;
+  }
+
+  .mat-button-wrapper {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.mat-paginator,
+.mat-paginator-page-size .mat-select-trigger {
+  color: map-get($gray, 80);
+}
+
+.mat-paginator-container {
+  min-height: 48px;
+}
+
+.mat-paginator-icon {
+  transform: scale(20 * 1/24); // the easiest way to change it' size
+}
