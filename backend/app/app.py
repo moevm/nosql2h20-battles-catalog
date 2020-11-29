@@ -10,8 +10,8 @@ from .views import router, error_response
 
 def create_app():
     origins = [
-        "http://localhost",
         "http://localhost:4200",
+        "http://127.0.0.1:4200",
     ]
 
     app = FastAPI()

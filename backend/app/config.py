@@ -10,8 +10,7 @@ CONFIG_DIR = Path(__file__).absolute().parent
 
 
 class Settings(BaseSettings):
-    MONGODB_HOST: str = os.getenv('MONGODB_HOST') or 'localhost'
-    MONGODB_PORT: int = 27017
+    MONGODB_URI: str = os.getenv('MONGODB_URI') or 'mongodb://localhost:27017'
     MONGODB_DB_NAME: str = 'nosql2020-battles'
     MONGODB_COLLECTION: str = 'battles'
     SERVER_DIR: str = str(Path(CONFIG_DIR).absolute().parent)
