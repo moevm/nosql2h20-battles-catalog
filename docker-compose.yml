@@ -1,13 +1,18 @@
 version: "3.0"
 
 services:
-  server:
+  backend:
     image: "supersolik/nosql2020-battles-backend:latest"
     environment:
-      - MONGODB_HOST=db
-    ports:
-      - 3030:3030
+      - MONGODB_URI=mongodb://localhost:27018
+    network_mode: host
+
+  frontend:
+    image: "supersolik/nosql2020-battles-frontend:latest"
+    network_mode: host
 
   db:
     image: mongo
+    command: mongod --port 27018
     restart: always
+    network_mode: host

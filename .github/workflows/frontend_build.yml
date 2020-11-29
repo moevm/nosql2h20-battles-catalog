@@ -1,4 +1,4 @@
-name: Docker CI Backend
+name: Docker CI Frontend
 
 on: [push, workflow_dispatch]
 
@@ -20,7 +20,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: ./backend
-          file: ./backend/Dockerfile
+          context: ./frontend
+          file: ./frontend/Dockerfile
           push: true
-          tags: supersolik/nosql2020-battles-backend:latest
+          tags: supersolik/nosql2020-battles-frontend:latest
