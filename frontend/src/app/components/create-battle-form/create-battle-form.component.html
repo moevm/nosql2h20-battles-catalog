@@ -35,7 +35,7 @@
       <label class="pl-label pl-label--horizontal">
         <mat-label>Actors</mat-label>
         <app-multiple-input formControlName="actors"
-                            [items]="service.allActors | async"
+                            [items]="service.list$ | async"
                             (added)="addActor()"
                             (removed)="removeActor($event)">
           <mat-error *ngIf="form.controls.actors.errors?.minLength">At least two actors must be chosen</mat-error>

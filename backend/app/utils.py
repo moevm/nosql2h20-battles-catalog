@@ -194,7 +194,7 @@ async def db_import_csv(battle_csv_files: List[UploadFile]):
             shutil.copyfileobj(actors.file, temp_actors)
 
         import_battles_cmd = f'''
-        mongoimport --host={settings.MONGODB_HOST}:{settings.MONGODB_PORT} \
+        mongoimport {settings.MONGODB_URI} \
                     --db={settings.MONGODB_DB_NAME} \
                     --collection={settings.MONGODB_COLLECTION} \
                     --mode merge --upsertFields=battle_id \
@@ -202,7 +202,7 @@ async def db_import_csv(battle_csv_files: List[UploadFile]):
                     --file=\"{battles_temp_path}\"
         '''
         import_actors_cmd = f'''
-        mongoimport --host={settings.MONGODB_HOST}:{settings.MONGODB_PORT} \
+        mongoimport {settings.MONGODB_URI} \
                     --db={settings.MONGODB_DB_NAME} \
                     --collection=temp_actors \
                     --mode merge --upsertFields=battle_id,actor_name,army_name \
@@ -259,14 +259,14 @@ async def db_export_csv(export_dir):
     mkdir(os.path.join(export_dir, 'csv'))
 
     export_battles_cmd = f'''
-    mongoexport --host {settings.MONGODB_HOST}:{settings.MONGODB_PORT} \
+    mongoexport {settings.MONGODB_URI} \
                 --db {settings.MONGODB_DB_NAME} \
                 --collection export_battles \
                 --type=csv --out {export_dir}/csv/battles.csv --fields battle_id,name,war,datetime_min,datetime_max
     '''
 
     export_actors_cmd = f'''
-    mongoexport --host {settings.MONGODB_HOST}:{settings.MONGODB_PORT} \
+    mongoexport {settings.MONGODB_URI} \
                 --db {settings.MONGODB_DB_NAME} \
                 --collection export_actors \
                 --type=csv --out {export_dir}/csv/actors.csv --fields battle_id,actor_name,army_name,commander,initial_state,casualties,is_winner
