@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { CreateBattleFormService } from './create-battle-form.service';
 import { HttpClient } from '@angular/common/http';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ActorsService } from 'src/app/actors.service';
@@ -18,8 +17,6 @@ export class CreateBattleFormComponent {
   constructor(public service: ActorsService,
               private http: HttpClient,
               private dialogRef: MatDialogRef<CreateBattleFormComponent>) {
-    // service.get();
-
     this.form = new FormGroup({
       name: new FormControl('', Validators.required),
       war: new FormControl('', Validators.required),
